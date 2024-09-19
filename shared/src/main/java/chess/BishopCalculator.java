@@ -22,39 +22,72 @@ public class BishopCalculator implements PieceMovesCalculator {
     @Override
     public ArrayList<ChessMove> calculateMoves(ChessBoard board, ChessPosition position) {
         ArrayList<ChessMove> moves = new ArrayList<>();
-        int left = 7- position.getRow() - 1;
+        ChessGame.TeamColor color = board.getPiece(position).getTeamColor();
+        boolean took_left_up = false;
+        boolean took_right_up = false;
+        int left = 8- position.getRow() + 1;
         for (int i = 1; i < left; i++) {
             int newRow = position.getRow() + i;
             int added_Col = position.getColumn() + i;
             int removed_Col = position.getColumn() - i;
-            if ( added_Col < 7){
-                ChessPosition newPosition = new ChessPosition(newRow, added_Col);
-                if (board.getPiece(newPosition) == null) {
-                    moves.add(new ChessMove(position, newPosition,null));
+            if ( added_Col < 9 && !took_right_up){
+                ChessPosition newPosition = new ChessPosition(newRow , added_Col );
+                if (board.getPiece(newPosition) != null) {
+                    if (board.getPiece(newPosition).getTeamColor() != color) {
+                        took_right_up = true;
+                    }
+                    else if(board.getPiece(newPosition).getTeamColor() == color){
+                        continue;
+                    }
                 }
+                moves.add(new ChessMove(position, newPosition,null));
+
             }
-            if (removed_Col > 0){
-                ChessPosition newPosition = new ChessPosition(newRow, added_Col);
-                if (board.getPiece(newPosition) == null) {
-                    moves.add(new ChessMove(position, newPosition,null));
+            if (removed_Col > 0 && !took_left_up){
+                ChessPosition newPosition = new ChessPosition(newRow , removed_Col );
+                if (board.getPiece(newPosition) != null) {
+                    if (board.getPiece(newPosition).getTeamColor() != color) {
+                        took_left_up = true;
+                    }
+                    else if(board.getPiece(newPosition).getTeamColor() == color){
+                        continue;
+                    }
                 }
+                moves.add(new ChessMove(position, newPosition,null));
+
             }
         }
-        for (int i = 1; i < position.getRow()+1;i++) {
+        boolean took_left_down = false;
+        boolean took_right_down = false;
+        for (int i = 1; i < position.getRow();i++) {
             int newRow = position.getRow() - i;
             int added_Col = position.getColumn() + i;
             int removed_Col = position.getColumn() - i;
-            if ( added_Col < 7){
-                ChessPosition newPosition = new ChessPosition(newRow, added_Col);
-                if (board.getPiece(newPosition) == null) {
-                    moves.add(new ChessMove(position, newPosition,null));
+            if ( added_Col < 9 && !took_right_down){
+                ChessPosition newPosition = new ChessPosition(newRow , added_Col );
+                if (board.getPiece(newPosition) != null) {
+                    if (board.getPiece(newPosition).getTeamColor() != color) {
+                        took_right_down = true;
+                    }
+                    else if(board.getPiece(newPosition).getTeamColor() == color){
+                        continue;
+                    }
                 }
+                moves.add(new ChessMove(position, newPosition,null));
+
             }
-            if (removed_Col > 0){
-                ChessPosition newPosition = new ChessPosition(newRow, added_Col);
-                if (board.getPiece(newPosition) == null) {
-                    moves.add(new ChessMove(position, newPosition,null));
+            if (removed_Col > 0 && !took_left_down){
+                ChessPosition newPosition = new ChessPosition(newRow , removed_Col );
+                if (board.getPiece(newPosition) != null) {
+                    if (board.getPiece(newPosition).getTeamColor() != color) {
+                        took_left_down = true;
+                    }
+                    else if(board.getPiece(newPosition).getTeamColor() == color){
+                        continue;
+                    }
                 }
+                moves.add(new ChessMove(position, newPosition,null));
+
             }
         }
 
