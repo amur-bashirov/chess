@@ -35,12 +35,14 @@ public class BishopCalculator implements PieceMovesCalculator {
                 if (board.getPiece(newPosition) != null) {
                     if (board.getPiece(newPosition).getTeamColor() != color) {
                         took_right_up = true;
+                        moves.add(new ChessMove(position, newPosition,null));
                     }
                     else if(board.getPiece(newPosition).getTeamColor() == color){
-                        continue;
+                        took_right_up = true;
                     }
+                } else {
+                    moves.add(new ChessMove(position, newPosition,null));
                 }
-                moves.add(new ChessMove(position, newPosition,null));
 
             }
             if (removed_Col > 0 && !took_left_up){
@@ -48,12 +50,13 @@ public class BishopCalculator implements PieceMovesCalculator {
                 if (board.getPiece(newPosition) != null) {
                     if (board.getPiece(newPosition).getTeamColor() != color) {
                         took_left_up = true;
+                        moves.add(new ChessMove(position, newPosition,null));
                     }
                     else if(board.getPiece(newPosition).getTeamColor() == color){
-                        continue;
-                    }
+                        took_left_up = true;}
+                } else {
+                    moves.add(new ChessMove(position, newPosition,null));
                 }
-                moves.add(new ChessMove(position, newPosition,null));
 
             }
         }
@@ -68,12 +71,14 @@ public class BishopCalculator implements PieceMovesCalculator {
                 if (board.getPiece(newPosition) != null) {
                     if (board.getPiece(newPosition).getTeamColor() != color) {
                         took_right_down = true;
+                        moves.add(new ChessMove(position, newPosition,null));
                     }
                     else if(board.getPiece(newPosition).getTeamColor() == color){
-                        continue;
+                        took_right_down = true;
                     }
+                } else {
+                    moves.add(new ChessMove(position, newPosition, null));
                 }
-                moves.add(new ChessMove(position, newPosition,null));
 
             }
             if (removed_Col > 0 && !took_left_down){
@@ -81,19 +86,19 @@ public class BishopCalculator implements PieceMovesCalculator {
                 if (board.getPiece(newPosition) != null) {
                     if (board.getPiece(newPosition).getTeamColor() != color) {
                         took_left_down = true;
+                        moves.add(new ChessMove(position, newPosition,null));
                     }
                     else if(board.getPiece(newPosition).getTeamColor() == color){
-                        continue;
+                        took_left_down = true;
                     }
+                } else{
+                    moves.add(new ChessMove(position, newPosition,null));
                 }
-                moves.add(new ChessMove(position, newPosition,null));
 
             }
         }
 
-        if (moves.size() == 0) {
-            return null;
-        }
+
         return moves;
     }
 }
