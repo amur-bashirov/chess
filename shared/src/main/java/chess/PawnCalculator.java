@@ -6,6 +6,7 @@ public class PawnCalculator implements PieceMovesCalculator {
 
     private final ChessBoard board;
 
+
     @Override
     public String toString() {
         return "PawnCalculator{" +
