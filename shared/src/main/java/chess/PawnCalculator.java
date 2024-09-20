@@ -27,7 +27,7 @@ public class PawnCalculator implements PieceMovesCalculator {
         int col = position.getColumn();
         if (color == ChessGame.TeamColor.WHITE) {
 
-            if (row < 7 || col != 8) {
+            if (row < 7 && col != 8) {
                 ChessPosition newposition = new ChessPosition(row + 1, col + 1);
                 if (board.getPiece(newposition) != null) {
                     if (board.getPiece(newposition).getTeamColor() != color) {
@@ -37,7 +37,7 @@ public class PawnCalculator implements PieceMovesCalculator {
             }
 
 
-            if (row < 7 || col != 1 ) {
+            if (row < 7 && col != 1 ) {
                 ChessPosition newposition = new ChessPosition(row + 1, col - 1);
                 if (board.getPiece(newposition) != null) {
                     if (board.getPiece(newposition).getTeamColor() != color) {
@@ -82,7 +82,7 @@ public class PawnCalculator implements PieceMovesCalculator {
         if (color == ChessGame.TeamColor.BLACK) {
 
 
-            if (row > 2 || col != 8) {
+            if (row > 2 && col != 8) {
                 ChessPosition newposition = new ChessPosition(row - 1, col + 1);
                 if (board.getPiece(newposition) != null) {
                     if (board.getPiece(newposition).getTeamColor() != color) {
@@ -92,7 +92,7 @@ public class PawnCalculator implements PieceMovesCalculator {
             }
 
 
-            if (row > 2 || col != 1) {
+            if (row > 2 && col != 1) {
                 ChessPosition newposition = new ChessPosition(row - 1, col - 1);
                 if (board.getPiece(newposition) != null) {
                     if (board.getPiece(newposition).getTeamColor() != color) {
