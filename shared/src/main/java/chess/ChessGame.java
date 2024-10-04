@@ -3,6 +3,7 @@ package chess;
 import java.util.Collection;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.Arrays;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -126,6 +127,18 @@ public class ChessGame {
         }
         return false;
     }
+    public static boolean[] appendToArray(boolean[] array, boolean newElement) {
+        // Create a new array with one more element
+        boolean[] newArray = new boolean[array.length + 1];
+
+        // Copy the original array elements to the new array
+        System.arraycopy(array, 0, newArray, 0, array.length);
+
+        // Add the new element at the end
+        newArray[array.length] = newElement;
+
+        return newArray;
+    }
 
     /**
      * Determines if the given team is in checkmate
@@ -134,7 +147,77 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        ChessPosition king_position = null;
+        ChessMove[] KingMoves = null;
+        for (int i = 1; i <9;i++ ){
+            for (int j = 1;j<9;j++){
+                ChessPiece piece = board.getPiece(new ChessPosition(i,j));
+                if (piece != null) {
+                    if (piece.getPieceType() == ChessPiece.PieceType.KING && piece.getTeamColor() == teamColor) {
+                        king_position = new ChessPosition(i, j);
+                        Collection<ChessMove> king_moves = piece.pieceMoves(board, new ChessPosition(i, j));
+                        KingMoves = king_moves.toArray(new ChessMove[0]);
+                        break;
+                    }
+                }
+            }
+            if (king_position != null) {
+                break;
+            }
+        }
+        int n = KingMoves.length;
+        for (int p = 0;p < KingMoves.length;p++){
+            ChessPiece important_piece = board.getPiece(KingMoves[p].getEndPosition());
+            board.addPiece(KingMoves[p].getEndPosition(), board.getPiece(king_position));
+            board.addPiece(king_position, null);
+            boolean isInCheck = false;
+
+            for (int i = 1; i <9;i++ ){
+                for (int j = 1;j<9;j++){
+                    ChessPiece piece = board.getPiece(new ChessPosition(i,j));
+                    if (piece != null) {
+                        if (piece.getTeamColor() != teamColor) {
+                            Collection<ChessMove> piece_moves = piece.pieceMoves(board, new ChessPosition(i, j));
+                            ChessMove[] movesArray = piece_moves.toArray(new ChessMove[0]);
+                            for (int k = 0; k < movesArray.length; k++) {
+                                if (movesArray[k].getEndPosition().equals(KingMoves[p].getEndPosition())) {
+                                    isInCheck = true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            board.addPiece(king_position, board.getPiece(KingMoves[p].getEndPosition()));
+            board.addPiece(KingMoves[p].getEndPosition(), important_piece);
+            if (!isInCheck){
+                return false;
+            }
+
+        }
+
+//        boolean[] list = null;
+//        for (int i = 0;i<KingMoves.length;i++){
+//            ChessPiece important_piece = board.getPiece(KingMoves[i].getEndPosition());
+//            board.addPiece(KingMoves[i].getEndPosition(), board.getPiece(king_position));
+//            board.addPiece(king_position, null);
+//            if (isInCheck(teamColor)){
+//                list = appendToArray(list,true);
+//            }
+//            board.addPiece(king_position, board.getPiece(KingMoves[i].getEndPosition()));
+//            board.addPiece(KingMoves[i].getEndPosition(), important_piece);
+//        }
+//        for (int i = 0; i < list.length;i++){
+//            if (list[i] == false){
+//                return false;
+//            }
+//        }
+
+
+
+
+
+        return true;
     }
 
     /**
