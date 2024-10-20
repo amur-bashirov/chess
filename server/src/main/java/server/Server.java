@@ -2,10 +2,7 @@ package server;
 
 import com.google.gson.Gson;
 import dataaccess.*;
-import service.LoginResult;
-import service.OccupiedException;
-import service.RegisterResult;
-import service.UserService;
+import service.*;
 import spark.*;
 
 import java.util.Map;
@@ -42,8 +39,21 @@ public class Server {
         return Spark.port();
     }
 
-    private Object Logout(Request request, Response response) {
-        var serializer = new Gson();
+    private Object Logout(Request req, Response res) throws DataAccessException{
+        String authToken = req.headers("Authorization");
+
+        // Validate the Authorization token
+        if (authToken == null || authToken.isEmpty()) {
+            throw new DataAccessException("unauthorized");
+        }
+
+        LogoutRequest request = new LogoutRequest(authToken);
+        userService.logout(request);
+
+        String json = new Gson().toJson(new Object()); // Return empty JSON object
+        res.body(json);
+        res.status(200); // OK
+        return json;
 
     }
 
@@ -91,6 +101,7 @@ public class Server {
         res.status(400); // Set HTTP status to 400 Bad Request
         return body;
     }
+
     public Object handleOccupiedException(OccupiedException e, Request req, Response res) {
         var body = new Gson().toJson(Map.of("message", String.format("Error: %s", e.getMessage()), "success", false));
         res.body(body);

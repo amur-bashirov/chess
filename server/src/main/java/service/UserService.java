@@ -7,6 +7,7 @@ import dataaccess.UserDataAccess;
 import model.AuthData;
 import model.UserData;
 import server.LoginRequest;
+import server.LogoutRequest;
 import server.RegisterRequest;
 
 
@@ -45,7 +46,12 @@ public class UserService {
         }
         throw new DataAccessException("unauthorized");
     }
-    public void logout(AuthData auth) {
-
+    public void logout(LogoutRequest request) throws DataAccessException{
+        AuthData data = authMethods.getAuth(request.authToken());
+        if (data != null){
+            authMethods.deleteAuth(data);
+            return;
+        }
+        throw new DataAccessException("unauthorized");
     }
 }
