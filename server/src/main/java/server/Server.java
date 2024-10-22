@@ -13,6 +13,10 @@ public class Server {
     private final AuthDataAccess authAccess = new MemoryAuthDAO();
     private final UserDataAccess userAccess = new MemoryUserDAO();
     private final UserService userService = new UserService(userAccess,authAccess);
+    private final GameDataAccess gameAccess = new MemoryGameDAO();
+    private final GameService gameService = new GameService(gameAccess, authAccess);
+    private final ClearAccess clearAccess = new MemoryClearDAO(authAccess, userAccess, gameAccess);
+    private final ClearService clearService = new ClearService(clearAccess);
 
     //public Server()
 
@@ -33,11 +37,79 @@ public class Server {
         Spark.exception(Exception.class, this::handleGenericException);
         Spark.post("/session",this::Login);
         Spark.delete("/session",this::Logout);
-
+        Spark.get("/game",this::ListGames);
+        Spark.post("/game",this::CreateGame);
+        Spark.put("/game",this::JoinGame);
+        Spark.delete("/db",this::Clear);
 
         Spark.awaitInitialization();
         return Spark.port();
     }
+
+    private Object ListGames(Request req, Response res) throws DataAccessException{
+        String authToken = req.headers("Authorization");
+        if (authToken == null || authToken.isEmpty()) {
+            throw new DataAccessException("unauthorized");
+        }
+        ListGamesRequest request = new ListGamesRequest(authToken);
+        var serializer = new Gson();
+        ListGamesResult result = gameService.listGames(request);var json = serializer.toJson(result);
+        res.body(json);
+        return json;
+
+    }
+
+    private Object Clear(Request req, Response res) {
+        clearService.clear();
+        String json = new Gson().toJson(new Object()); // Return empty JSON object
+        res.body(json);
+        res.status(200); // OK
+        return json;
+    }
+
+    private Object JoinGame(Request req, Response res) throws DataAccessException{
+        var serializer = new Gson();
+        String authToken = req.headers("Authorization");
+        if (authToken == null || authToken.isEmpty()) {
+            throw new DataAccessException("unauthorized");
+        }
+        JoinGameRequest tempRequest = serializer.fromJson(req.body(),JoinGameRequest.class);
+        if (tempRequest.playerColor() == null) {//tempRequest.gameID() == null
+            throw new BadRequestsException("bad request");
+        }
+        JoinGameRequest request = new JoinGameRequest(authToken,tempRequest.playerColor(),tempRequest.gameID());
+        if (request.authToken().equals(null) || request.playerColor().equals(null))  {
+            throw new BadRequestsException("bad request");
+        }
+        gameService.joinGame(request);
+        String json = new Gson().toJson(new Object()); // Return empty JSON object
+        res.body(json);
+        res.status(200); // OK
+        return json;
+    }
+
+    private Object CreateGame(Request req, Response res) throws DataAccessException {
+        var serializer = new Gson();
+        String authToken = req.headers("Authorization");
+        if (authToken == null || authToken.isEmpty()) {
+            throw new DataAccessException("unauthorized");
+        }
+        CreateGamesRequest tempRequest = serializer.fromJson(req.body(),CreateGamesRequest.class);
+        if (tempRequest.gameName() == null) {
+            throw new BadRequestsException("bad request");
+        }
+        CreateGamesRequest request = new CreateGamesRequest(authToken,tempRequest.gameName());
+        if (request.authToken().equals(null) || request.gameName().equals(null))  {
+            throw new BadRequestsException("bad request");
+        }
+        CreateGameResult result = gameService.createGame(request);
+        var json = serializer.toJson(result);
+        res.body(json);
+        res.status(200);
+        return json;
+    }
+
+
 
     private Object Logout(Request req, Response res) throws DataAccessException{
         String authToken = req.headers("Authorization");

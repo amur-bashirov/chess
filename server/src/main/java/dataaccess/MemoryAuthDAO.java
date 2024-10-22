@@ -8,7 +8,6 @@ import model.UserData;
 
 public class MemoryAuthDAO implements AuthDataAccess{
 
-    private int authToken = 0;
     private final ArrayList<AuthData> authList = new ArrayList();
 
     public AuthData createAuth(UserData data){
@@ -39,4 +38,9 @@ public class MemoryAuthDAO implements AuthDataAccess{
         }
         System.out.println("Size of the ArrayList after deleteAuth method: " + authList.size());
     }
+
+    @Override
+    public void clear() {
+        authList.clear();
+        }
 }

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 public class MemoryUserDAO implements UserDataAccess{
 
-    ArrayList<UserData> UsersList = new ArrayList();
+    private ArrayList<UserData> UsersList = new ArrayList();
 
 
 
@@ -21,5 +21,10 @@ public class MemoryUserDAO implements UserDataAccess{
     @Override
     public void creatUser(UserData data) {
         UsersList.add(data);
+    }
+
+    @Override
+    public void clear() {
+        UsersList.clear();
     }
 }
