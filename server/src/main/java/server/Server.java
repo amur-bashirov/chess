@@ -30,23 +30,23 @@ public class Server {
 
         //This line initializes the server and can be removed once you have a functioning endpoint 
         Spark.init();
-        Spark.post("/user",this::Register);
+        Spark.post("/user",this::register);
         Spark.exception(DataAccessException.class, this::handleDataAccessException);
         Spark.exception(BadRequestsException.class, this::handleBadRequestException);
         Spark.exception(OccupiedException.class, this::handleOccupiedException);
         Spark.exception(Exception.class, this::handleGenericException);
-        Spark.post("/session",this::Login);
-        Spark.delete("/session",this::Logout);
-        Spark.get("/game",this::ListGames);
-        Spark.post("/game",this::CreateGame);
-        Spark.put("/game",this::JoinGame);
-        Spark.delete("/db",this::Clear);
+        Spark.post("/session",this::login);
+        Spark.delete("/session",this::logout);
+        Spark.get("/game",this::listGames);
+        Spark.post("/game",this::createGame);
+        Spark.put("/game",this::joinGame);
+        Spark.delete("/db",this::clear);
 
         Spark.awaitInitialization();
         return Spark.port();
     }
 
-    private Object ListGames(Request req, Response res) throws DataAccessException{
+    private Object listGames(Request req, Response res) throws DataAccessException{
         String authToken = req.headers("Authorization");
         if (authToken == null || authToken.isEmpty()) {
             throw new DataAccessException("unauthorized");
@@ -59,7 +59,7 @@ public class Server {
 
     }
 
-    private Object Clear(Request req, Response res) {
+    private Object clear(Request req, Response res) {
         clearService.clear();
         String json = new Gson().toJson(new Object()); // Return empty JSON object
         res.body(json);
@@ -67,7 +67,7 @@ public class Server {
         return json;
     }
 
-    private Object JoinGame(Request req, Response res) throws DataAccessException{
+    private Object joinGame(Request req, Response res) throws DataAccessException, OccupiedException, BadRequestsException {
         var serializer = new Gson();
         String authToken = req.headers("Authorization");
         if (authToken == null || authToken.isEmpty()) {
@@ -88,7 +88,7 @@ public class Server {
         return json;
     }
 
-    private Object CreateGame(Request req, Response res) throws DataAccessException {
+    private Object createGame(Request req, Response res) throws DataAccessException, BadRequestsException {
         var serializer = new Gson();
         String authToken = req.headers("Authorization");
         if (authToken == null || authToken.isEmpty()) {
@@ -111,7 +111,7 @@ public class Server {
 
 
 
-    private Object Logout(Request req, Response res) throws DataAccessException{
+    private Object logout(Request req, Response res) throws DataAccessException{
         String authToken = req.headers("Authorization");
 
         // Validate the Authorization token
@@ -129,7 +129,7 @@ public class Server {
 
     }
 
-    public Object Login(Request req, Response res) throws DataAccessException{
+    public Object login(Request req, Response res) throws DataAccessException{
         var serializer = new Gson();
         LoginRequest request = serializer.fromJson(req.body(),LoginRequest.class);
         LoginResult result = userService.login(request);
@@ -138,7 +138,7 @@ public class Server {
         return json;
     }
 
-    public Object Register(Request req, Response res) throws DataAccessException {
+    public Object register(Request req, Response res) throws DataAccessException, OccupiedException, BadRequestsException {
         var serializer = new Gson();
         RegisterRequest request = serializer.fromJson(req.body(),RegisterRequest.class);
         //if username, email or password is null thro the exception

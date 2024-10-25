@@ -39,8 +39,7 @@ public class GameService {
         if (authData != null){
             GameData game = gameMethods.getGame(request.gameName());
             if (game == null){
-                gameMethods.createGame(request.gameName());
-                GameData newGame = gameMethods.getGame(request.gameName());
+                GameData newGame = gameMethods.createGame(request.gameName());
                 CreateGameResult result = new CreateGameResult(newGame.gameID());
                 return result;
             }
@@ -49,7 +48,7 @@ public class GameService {
     }
 
 
-    public void joinGame(JoinGameRequest request) throws DataAccessException{
+    public void joinGame(JoinGameRequest request) throws DataAccessException, OccupiedException, BadRequestsException {
         AuthData authData = authMethods.getAuth(request.authToken());
         if (authData != null){
             GameData game = gameMethods.getGame2(request.gameID());
@@ -57,6 +56,7 @@ public class GameService {
                 gameMethods.updateGame(request.playerColor(),request.gameID(), authData.username());
                 return;
             }
+            throw new BadRequestsException("bad request");
         }
         throw new DataAccessException("unauthorized");
     }

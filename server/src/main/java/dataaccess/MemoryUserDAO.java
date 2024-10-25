@@ -5,12 +5,12 @@ import java.util.ArrayList;
 
 public class MemoryUserDAO implements UserDataAccess{
 
-    private ArrayList<UserData> UsersList = new ArrayList();
+    private ArrayList<UserData> usersList = new ArrayList();
 
 
 
     public UserData getUser(String username){
-        for (UserData user: UsersList){
+        for (UserData user: usersList){
             if (user.username().equals(username)) {
                 return user;
             }
@@ -20,11 +20,11 @@ public class MemoryUserDAO implements UserDataAccess{
 
     @Override
     public void creatUser(UserData data) {
-        UsersList.add(data);
+        usersList.add(data);
     }
 
     @Override
     public void clear() {
-        UsersList.clear();
+        usersList.clear();
     }
 }

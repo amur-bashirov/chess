@@ -16,20 +16,20 @@ public class RookCalculator implements PieceMovesCalculator {
 
         ArrayList<ChessMove> moves = new ArrayList<>();
         ChessGame.TeamColor color = board.getPiece(position).getTeamColor();
-        boolean took_left = false;
-        boolean took_right = false;
-        boolean took_up = false;
-        boolean took_down = false;
+        boolean tookLeft = false;
+        boolean tookRight = false;
+        boolean tookUp = false;
+        boolean tookDown = false;
         int left = 8- position.getRow() + 1;
         for (int i = 1; i < left; i++) {
-            if (!took_up) {
+            if (!tookUp) {
                 ChessPosition newPosition = new ChessPosition(position.getRow() +i, position.getColumn());
                 if (board.getPiece(newPosition) != null) {
                     if (board.getPiece(newPosition).getTeamColor() != color) {
-                        took_up = true;
+                        tookUp = true;
                         moves.add(new ChessMove(position, newPosition,null));
                     } else if (board.getPiece(newPosition).getTeamColor() == color) {
-                        took_up = true;
+                        tookUp = true;
                     }
                 } else {
                     moves.add(new ChessMove(position, newPosition, null));
@@ -37,14 +37,14 @@ public class RookCalculator implements PieceMovesCalculator {
             }
         }
         for (int i = 1; i < position.getRow();i++) {
-            if (!took_down) {
+            if (!tookDown) {
                 ChessPosition newPosition = new ChessPosition(position.getRow() -i, position.getColumn());
                 if (board.getPiece(newPosition) != null) {
                     if (board.getPiece(newPosition).getTeamColor() != color) {
-                        took_down = true;
+                        tookDown = true;
                         moves.add(new ChessMove(position, newPosition,null));
                     } else if (board.getPiece(newPosition).getTeamColor() == color) {
-                        took_down = true;
+                        tookDown = true;
                     }
                 } else {
                     moves.add(new ChessMove(position, newPosition, null));
@@ -53,14 +53,14 @@ public class RookCalculator implements PieceMovesCalculator {
         }
         int left2 = 8- position.getColumn();
         for (int i = 1; i < left2+1; i++) {
-            if (!took_right){
+            if (!tookRight){
                 ChessPosition newPosition = new ChessPosition(position.getRow(), position.getColumn() + i);
                 if (board.getPiece(newPosition) != null) {
                     if (board.getPiece(newPosition).getTeamColor() != color) {
-                        took_right = true;
+                        tookRight = true;
                         moves.add(new ChessMove(position, newPosition,null));
                     } else if (board.getPiece(newPosition).getTeamColor() == color) {
-                        took_right = true;
+                        tookRight = true;
                     }
                 } else {
                     moves.add(new ChessMove(position, newPosition, null));
@@ -68,14 +68,14 @@ public class RookCalculator implements PieceMovesCalculator {
             }
         }
         for (int i = 1; i < position.getColumn();i++) {
-            if (!took_left) {
+            if (!tookLeft) {
                 ChessPosition newPosition = new ChessPosition(position.getRow(), position.getColumn() -i);
                 if (board.getPiece(newPosition) != null) {
                     if (board.getPiece(newPosition).getTeamColor() != color) {
-                        took_left = true;
+                        tookLeft = true;
                         moves.add(new ChessMove(position, newPosition,null));
                     } else if (board.getPiece(newPosition).getTeamColor() == color) {
-                        took_left = true;
+                        tookLeft = true;
                     }
                 } else {
                     moves.add(new ChessMove(position, newPosition, null));

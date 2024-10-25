@@ -16,73 +16,73 @@ public class QueenCalculator implements PieceMovesCalculator {
     public ArrayList<ChessMove> calculateMoves(ChessBoard board, ChessPosition position) {
         ArrayList<ChessMove> moves = new ArrayList<>();
         ChessGame.TeamColor color = board.getPiece(position).getTeamColor();
-        boolean took_left_up = false;
-        boolean took_right_up = false;
+        boolean tookLeftUp = false;
+        boolean tookRightUp = false;
         int left = 8- position.getRow() + 1;
         for (int i = 1; i < left; i++) {
             int newRow = position.getRow() + i;
-            int added_Col = position.getColumn() + i;
-            int removed_Col = position.getColumn() - i;
-            if ( added_Col < 9 && !took_right_up){
-                ChessPosition newPosition = new ChessPosition(newRow , added_Col );
+            int addedCol = position.getColumn() + i;
+            int removedCol = position.getColumn() - i;
+            if ( addedCol < 9 && !tookRightUp){
+                ChessPosition newPosition = new ChessPosition(newRow , addedCol );
                 if (board.getPiece(newPosition) != null) {
                     if (board.getPiece(newPosition).getTeamColor() != color) {
-                        took_right_up = true;
+                        tookRightUp = true;
                         moves.add(new ChessMove(position, newPosition,null));
                     }
                     else if(board.getPiece(newPosition).getTeamColor() == color){
-                        took_right_up = true;
+                        tookRightUp = true;
                     }
                 } else {
                     moves.add(new ChessMove(position, newPosition,null));
                 }
 
             }
-            if (removed_Col > 0 && !took_left_up){
-                ChessPosition newPosition = new ChessPosition(newRow , removed_Col );
+            if (removedCol > 0 && !tookLeftUp){
+                ChessPosition newPosition = new ChessPosition(newRow , removedCol );
                 if (board.getPiece(newPosition) != null) {
                     if (board.getPiece(newPosition).getTeamColor() != color) {
-                        took_left_up = true;
+                        tookLeftUp = true;
                         moves.add(new ChessMove(position, newPosition,null));
                     }
                     else if(board.getPiece(newPosition).getTeamColor() == color){
-                        took_left_up = true;}
+                        tookLeftUp = true;}
                 } else {
                     moves.add(new ChessMove(position, newPosition,null));
                 }
 
             }
         }
-        boolean took_left_down = false;
-        boolean took_right_down = false;
+        boolean tookLeftDown = false;
+        boolean tookRightDown = false;
         for (int i = 1; i < position.getRow();i++) {
             int newRow = position.getRow() - i;
-            int added_Col = position.getColumn() + i;
-            int removed_Col = position.getColumn() - i;
-            if ( added_Col < 9 && !took_right_down){
-                ChessPosition newPosition = new ChessPosition(newRow , added_Col );
+            int addedCol = position.getColumn() + i;
+            int removedCol = position.getColumn() - i;
+            if ( addedCol < 9 && !tookRightDown){
+                ChessPosition newPosition = new ChessPosition(newRow , addedCol );
                 if (board.getPiece(newPosition) != null) {
                     if (board.getPiece(newPosition).getTeamColor() != color) {
-                        took_right_down = true;
+                        tookRightDown = true;
                         moves.add(new ChessMove(position, newPosition,null));
                     }
                     else if(board.getPiece(newPosition).getTeamColor() == color){
-                        took_right_down = true;
+                        tookRightDown = true;
                     }
                 } else {
                     moves.add(new ChessMove(position, newPosition, null));
                 }
 
             }
-            if (removed_Col > 0 && !took_left_down){
-                ChessPosition newPosition = new ChessPosition(newRow , removed_Col );
+            if (removedCol > 0 && !tookLeftDown){
+                ChessPosition newPosition = new ChessPosition(newRow , removedCol );
                 if (board.getPiece(newPosition) != null) {
                     if (board.getPiece(newPosition).getTeamColor() != color) {
-                        took_left_down = true;
+                        tookLeftDown = true;
                         moves.add(new ChessMove(position, newPosition,null));
                     }
                     else if(board.getPiece(newPosition).getTeamColor() == color){
-                        took_left_down = true;
+                        tookLeftDown = true;
                     }
                 } else{
                     moves.add(new ChessMove(position, newPosition,null));
@@ -91,19 +91,19 @@ public class QueenCalculator implements PieceMovesCalculator {
             }
         }
         //now the rook moves
-        boolean took_left = false;
-        boolean took_right = false;
-        boolean took_up = false;
-        boolean took_down = false;
+        boolean tookLeft = false;
+        boolean tookRight = false;
+        boolean tookUp = false;
+        boolean tookDown = false;
         for (int i = 1; i < left; i++) {
-            if (!took_up) {
+            if (!tookUp) {
                 ChessPosition newPosition = new ChessPosition(position.getRow() +i, position.getColumn());
                 if (board.getPiece(newPosition) != null) {
                     if (board.getPiece(newPosition).getTeamColor() != color) {
-                        took_up = true;
+                        tookUp = true;
                         moves.add(new ChessMove(position, newPosition,null));
                     } else if (board.getPiece(newPosition).getTeamColor() == color) {
-                        took_up = true;
+                        tookUp = true;
                     }
                 } else {
                     moves.add(new ChessMove(position, newPosition, null));
@@ -111,14 +111,14 @@ public class QueenCalculator implements PieceMovesCalculator {
             }
         }
         for (int i = 1; i < position.getRow();i++) {
-            if (!took_down) {
+            if (!tookDown) {
                 ChessPosition newPosition = new ChessPosition(position.getRow() -i, position.getColumn());
                 if (board.getPiece(newPosition) != null) {
                     if (board.getPiece(newPosition).getTeamColor() != color) {
-                        took_down = true;
+                        tookDown = true;
                         moves.add(new ChessMove(position, newPosition,null));
                     } else if (board.getPiece(newPosition).getTeamColor() == color) {
-                        took_down = true;
+                        tookDown = true;
                     }
                 } else {
                     moves.add(new ChessMove(position, newPosition, null));
@@ -127,14 +127,14 @@ public class QueenCalculator implements PieceMovesCalculator {
         }
         int left2 = 8- position.getColumn();
         for (int i = 1; i < left2+1; i++) {
-            if (!took_right){
+            if (!tookRight){
                 ChessPosition newPosition = new ChessPosition(position.getRow(), position.getColumn() + i);
                 if (board.getPiece(newPosition) != null) {
                     if (board.getPiece(newPosition).getTeamColor() != color) {
-                        took_right = true;
+                        tookRight = true;
                         moves.add(new ChessMove(position, newPosition,null));
                     } else if (board.getPiece(newPosition).getTeamColor() == color) {
-                        took_right = true;
+                        tookRight = true;
                     }
                 } else {
                     moves.add(new ChessMove(position, newPosition, null));
@@ -142,14 +142,14 @@ public class QueenCalculator implements PieceMovesCalculator {
             }
         }
         for (int i = 1; i < position.getColumn();i++) {
-            if (!took_left) {
+            if (!tookLeft) {
                 ChessPosition newPosition = new ChessPosition(position.getRow(), position.getColumn() -i);
                 if (board.getPiece(newPosition) != null) {
                     if (board.getPiece(newPosition).getTeamColor() != color) {
-                        took_left = true;
+                        tookLeft = true;
                         moves.add(new ChessMove(position, newPosition,null));
                     } else if (board.getPiece(newPosition).getTeamColor() == color) {
-                        took_left = true;
+                        tookLeft = true;
                     }
                 } else {
                     moves.add(new ChessMove(position, newPosition, null));

@@ -14,6 +14,7 @@ import java.util.UUID;
 public class MemoryGameDAO implements GameDataAccess{
 
     private ArrayList<GameData> gameList = new ArrayList();
+    private int gameID = 1;
 
 
     @Override
@@ -42,14 +43,15 @@ public class MemoryGameDAO implements GameDataAccess{
     }
 
     @Override
-    public void createGame(String gameName) {
-        UUID uuid = UUID.randomUUID();
-        int GameID = (int) (uuid.getLeastSignificantBits() & 0xFFFFFFFFL);
+    public GameData createGame(String gameName) {
+//        UUID uuid = UUID.randomUUID();
+//        int GameID = (int) (uuid.getLeastSignificantBits() & 0xFFFFFFFFL);
         ChessGame game = new ChessGame();
-        GameData data = new GameData(GameID,null,null,gameName,game);
+        GameData data = new GameData(gameID++,null,null,gameName,game);
         System.out.println("New game created:" + data.toString());
         gameList.add(data);
         System.out.println(gameList.toString());
+        return data;
     }
 
     @Override
@@ -64,7 +66,7 @@ public class MemoryGameDAO implements GameDataAccess{
     }
 
     @Override
-    public void updateGame(String gameColor, int gameID, String username) {
+    public void updateGame(String gameColor, int gameID, String username) throws OccupiedException {
         for (GameData data: gameList){
             System.out.println(data.toString());
             if (data.gameID() == gameID){
