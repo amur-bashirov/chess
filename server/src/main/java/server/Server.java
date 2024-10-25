@@ -55,6 +55,7 @@ public class Server {
         var serializer = new Gson();
         ListGamesResult result = gameService.listGames(request);var json = serializer.toJson(result);
         res.body(json);
+        res.status(200);
         return json;
 
     }
@@ -135,6 +136,7 @@ public class Server {
         LoginResult result = userService.login(request);
         var json = serializer.toJson(result);
         res.body(json);
+        res.status(200);
         return json;
     }
 
@@ -148,6 +150,7 @@ public class Server {
         RegisterResult result = userService.register(request);
         var json = serializer.toJson(result);
         res.body(json);
+        res.status(200);
         return json;
     }
 
