@@ -243,13 +243,8 @@ public class ChessGame {
                     if (piece.getTeamColor() == teamColor) {
                         Collection <ChessMove> validMoves = validMoves(new ChessPosition(i,j));
                         if (validMoves.size() > 0) {
-                            return false;
-                        }
-                    }
-                }
-            }
+                            return false;}}}}
         }
-
         return true;
     }
 
