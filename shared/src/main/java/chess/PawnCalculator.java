@@ -21,7 +21,8 @@ public class PawnCalculator implements PieceMovesCalculator {
         this.position = position;
     }
     @Override
-    public ArrayList<ChessMove> calculateMoves(ChessBoard board, ChessPosition position) {
+    public ArrayList<ChessMove> calculateMoves(ChessBoard board,
+                                               ChessPosition position) {
         ArrayList<ChessMove> moves = new ArrayList<>();
         ChessGame.TeamColor color = board.getPiece(position).getTeamColor();
         int row = position.getRow();

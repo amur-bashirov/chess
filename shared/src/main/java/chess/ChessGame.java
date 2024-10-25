@@ -31,8 +31,12 @@ public class ChessGame {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         ChessGame chessGame = (ChessGame) o;
         return Objects.equals(board, chessGame.board) && teamTurn == chessGame.teamTurn;
     }
@@ -89,7 +93,8 @@ public class ChessGame {
                 if (board.getPiece(move.getEndPosition()) != null) {
                     piece2 = board.getPiece(move.getEndPosition());
                 }
-                board.addPiece(move.getEndPosition(), new ChessPiece(board.getPiece(move.getStartPosition()).getTeamColor(), move.getPromotionPiece()));
+                board.addPiece(move.getEndPosition(), new ChessPiece(board.getPiece(move.getStartPosition()).getTeamColor(),
+                        move.getPromotionPiece()));
                 board.addPiece(move.getStartPosition(), null);
                 if (!isInCheck(piece.getTeamColor())) {
                     validMoves.add(move); // If not in check, add the move to validMoves
@@ -129,7 +134,8 @@ public class ChessGame {
         if (validMoves.contains(move) && board.getPiece(move.getStartPosition()).getTeamColor() == teamTurn) {
 
             if (move.getPromotionPiece() != null) {
-                board.addPiece(move.getEndPosition(), new ChessPiece(board.getPiece(move.getStartPosition()).getTeamColor(), move.getPromotionPiece()));
+                board.addPiece(move.getEndPosition(), new ChessPiece(board.getPiece(move.getStartPosition()).getTeamColor(),
+                        move.getPromotionPiece()));
                 board.addPiece(move.getStartPosition(), null);
             }else {
                 board.addPiece(move.getEndPosition(), board.getPiece(move.getStartPosition()));
