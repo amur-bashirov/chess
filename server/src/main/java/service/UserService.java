@@ -23,6 +23,7 @@ public class UserService {
     }
 
     public RegisterResult register(RegisterRequest request) throws OccupiedException, DataAccessException {
+        //create hash passwrod in here
         UserData data = new UserData(request.username(),request.password(),request.email());
         UserData data2 = userMethods.getUser(data.username());
         if (data2 == null){
@@ -37,6 +38,7 @@ public class UserService {
     public LoginResult login(LoginRequest request) throws DataAccessException{
         UserData data = userMethods.getUser(request.username());
         if(data != null) {
+            //BCrypt.checkpw(providedClearTextPassword, hashedPassword);
             if (data.password().equals(request.password())) {
                 AuthData auth = authMethods.createAuth(data);
                 LoginResult result = new LoginResult(auth.username(), auth.authToken());

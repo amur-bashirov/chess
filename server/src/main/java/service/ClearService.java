@@ -1,6 +1,7 @@
 package service;
 
 import dataaccess.ClearAccess;
+import dataaccess.DataAccessException;
 import dataaccess.MemoryClearDAO;
 
 public class ClearService {
@@ -10,7 +11,7 @@ public class ClearService {
         this.clearAccess = clear;
     }
 
-    public void clear() {
+    public void clear() throws DataAccessException {
          clearAccess.clear();
     }
 }

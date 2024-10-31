@@ -11,15 +11,24 @@ import java.util.Map;
 public class Server {
 
     private final AuthDataAccess authAccess = new MemoryAuthDAO();
-    private final UserDataAccess userAccess = new MySqlUserDAO();
-    private final UserService userService = new UserService(userAccess,authAccess);
-    private final GameDataAccess gameAccess = new MemoryGameDAO();
-    private final GameService gameService = new GameService(gameAccess, authAccess);
-    private final ClearAccess clearAccess = new MemoryClearDAO(authAccess, userAccess, gameAccess);
-    private final ClearService clearService = new ClearService(clearAccess);
+    private final UserDataAccess userAccess;
+    private final UserService userService;
+    private final GameDataAccess gameAccess;
+    private final GameService gameService ;
+    private final ClearAccess clearAccess ;
+    private final ClearService clearService ;
 
-    public Server() throws DataAccessException {
-        //this.userAccess = mySqlU
+    public Server() {
+        try {
+            this.userAccess = new MySqlUserDAO();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+        userService = new UserService(userAccess,authAccess);
+        gameAccess = new MemoryGameDAO();
+         gameService = new GameService(gameAccess, authAccess);
+         clearAccess = new MemoryClearDAO(authAccess, userAccess, gameAccess);
+         clearService = new ClearService(clearAccess);
     }
 
     //public Server()
@@ -64,7 +73,7 @@ public class Server {
 
     }
 
-    private Object clear(Request req, Response res) {
+    private Object clear(Request req, Response res) throws DataAccessException {
         clearService.clear();
         String json = new Gson().toJson(new Object()); // Return empty JSON object
         res.body(json);

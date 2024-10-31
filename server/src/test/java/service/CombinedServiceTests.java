@@ -32,7 +32,7 @@ public class CombinedServiceTests {
 
     }
     @BeforeEach
-    public void setup() throws OccupiedException {
+    public void setup() throws OccupiedException, DataAccessException {
         clearService.clear();
         RegisterResult result = userService.register(existingUser);
         existingAuth = result.authToken();
@@ -40,7 +40,7 @@ public class CombinedServiceTests {
 
     @Test
     @DisplayName("Successful User Registration")
-    public void testSuccessfulRegistration() throws OccupiedException {
+    public void testSuccessfulRegistration() throws OccupiedException, DataAccessException {
         RegisterResult result = userService.register(newUser);
         Assertions.assertNotNull(result);
         Assertions.assertEquals(newUser.username(), result.username());
@@ -118,7 +118,7 @@ public class CombinedServiceTests {
     @Test
     @Order(9)
     @DisplayName("Clear Data - Success")
-    public void testClearData() throws OccupiedException {
+    public void testClearData() throws OccupiedException, DataAccessException {
         RegisterResult result = userService.register(newUser);
         existingAuth = result.authToken();
         clearService.clear();
@@ -132,7 +132,7 @@ public class CombinedServiceTests {
     @Test
     @Order(10)
     @DisplayName("Multiple Clear Operations - Success")
-    public void testMultipleClears() throws OccupiedException {
+    public void testMultipleClears() throws OccupiedException, DataAccessException {
         RegisterResult result = userService.register(newUser);
         existingAuth = result.authToken();
         clearService.clear();

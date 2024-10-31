@@ -14,7 +14,7 @@ public class MemoryClearDAO implements ClearAccess {
     }
 
     @Override
-    public void clear() {
+    public void clear() throws DataAccessException {
         authAccess.clear();
         userAccess.clear();
         gameAccess.clear();

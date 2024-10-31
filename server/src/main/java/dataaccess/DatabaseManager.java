@@ -8,6 +8,7 @@ public class DatabaseManager {
     private static final String USER;
     private static final String PASSWORD;
     private static final String CONNECTION_URL;
+    private Connection conn;
 
     /*
      * Load the database information for the db.properties file.
@@ -64,19 +65,7 @@ public class DatabaseManager {
      * </code>
      */
 
-    private final String[] createStatements = {
-            """
-            CREATE TABLE IF NOT EXISTS  pet (
-              `id` int NOT NULL AUTO_INCREMENT,
-              `name` varchar(256) NOT NULL,
-              `type` ENUM('CAT', 'DOG', 'FISH', 'FROG', 'ROCK') DEFAULT 'CAT',
-              `json` TEXT DEFAULT NULL,
-              PRIMARY KEY (`id`),
-              INDEX(type),
-              INDEX(name)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
-            """
-    };
+
 
     static Connection getConnection() throws DataAccessException {
         try {
@@ -86,5 +75,53 @@ public class DatabaseManager {
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
         }
+    }
+
+    public void openConnection() throws DataAccessException {
+        try{
+             conn = DriverManager.getConnection(CONNECTION_URL, USER, PASSWORD);
+             conn.setAutoCommit(false);
+
+        } catch (SQLException e) {
+            throw new DataAccessException("openConnection failed" + e.getMessage());
+        }
+
+    }
+    private static final String[] createStatements = {
+            """
+            CREATE TABLE IF NOT EXISTS  user (
+              `username` varchar(256) NOT NULL,
+              `password` varchar(256) NOT NULL,
+              `email` varchar(256) NOT NULL,
+              PRIMARY KEY (`username`),
+            )
+            """
+    };
+
+    static void configureDatabase() throws DataAccessException {
+        DatabaseManager.createDatabase();
+        try (var conn = DatabaseManager.getConnection()) {
+            for (var statement : createStatements) {
+                try (var preparedStatement = conn.prepareStatement(statement)) {
+                    preparedStatement.executeUpdate();
+                }
+            }
+        } catch (SQLException ex) {
+            throw new DataAccessException(String.format("Unable to configure database: %s", ex.getMessage()));
+        }
+    }
+
+    public void closeConnection(boolean b) throws DataAccessException {
+        try{
+            if (b){
+                conn.commit();
+            } else {
+                conn.rollback();
+            }
+            conn.close();
+        } catch (SQLException e) {
+            throw new DataAccessException("closeConnection failed" + e.getMessage());
+        }
+
     }
 }
