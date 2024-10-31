@@ -40,6 +40,9 @@ public class DatabaseManager {
         try {
             var statement = "CREATE DATABASE IF NOT EXISTS " + DATABASE_NAME;
             var conn = DriverManager.getConnection(CONNECTION_URL, USER, PASSWORD);
+
+            //is it somewhere here?
+
             try (var preparedStatement = conn.prepareStatement(statement)) {
                 preparedStatement.executeUpdate();
             }
@@ -60,6 +63,21 @@ public class DatabaseManager {
      * }
      * </code>
      */
+
+    private final String[] createStatements = {
+            """
+            CREATE TABLE IF NOT EXISTS  pet (
+              `id` int NOT NULL AUTO_INCREMENT,
+              `name` varchar(256) NOT NULL,
+              `type` ENUM('CAT', 'DOG', 'FISH', 'FROG', 'ROCK') DEFAULT 'CAT',
+              `json` TEXT DEFAULT NULL,
+              PRIMARY KEY (`id`),
+              INDEX(type),
+              INDEX(name)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+            """
+    };
+
     static Connection getConnection() throws DataAccessException {
         try {
             var conn = DriverManager.getConnection(CONNECTION_URL, USER, PASSWORD);

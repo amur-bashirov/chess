@@ -22,7 +22,7 @@ public class UserService {
         this.authMethods = auth;
     }
 
-    public RegisterResult register(RegisterRequest request) throws OccupiedException {
+    public RegisterResult register(RegisterRequest request) throws OccupiedException, DataAccessException {
         UserData data = new UserData(request.username(),request.password(),request.email());
         UserData data2 = userMethods.getUser(data.username());
         if (data2 == null){

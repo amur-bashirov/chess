@@ -11,12 +11,16 @@ import java.util.Map;
 public class Server {
 
     private final AuthDataAccess authAccess = new MemoryAuthDAO();
-    private final UserDataAccess userAccess = new MemoryUserDAO();
+    private final UserDataAccess userAccess = new MySqlUserDAO();
     private final UserService userService = new UserService(userAccess,authAccess);
     private final GameDataAccess gameAccess = new MemoryGameDAO();
     private final GameService gameService = new GameService(gameAccess, authAccess);
     private final ClearAccess clearAccess = new MemoryClearDAO(authAccess, userAccess, gameAccess);
     private final ClearService clearService = new ClearService(clearAccess);
+
+    public Server() throws DataAccessException {
+        //this.userAccess = mySqlU
+    }
 
     //public Server()
 
