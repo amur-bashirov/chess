@@ -1,5 +1,5 @@
 package dataaccess;
-
+import com.google.gson.Gson;
 import java.sql.*;
 import java.util.Properties;
 
@@ -91,22 +91,39 @@ public class DatabaseManager {
 
     }
     private static final String[] createStatements = {
+//            """
+//            CREATE TABLE IF NOT EXISTS  user (
+//              `username` int,
+//              PRIMARY KEY (`username`)
+//            );
+//            """,
             """
             CREATE TABLE IF NOT EXISTS  user (
               `username` varchar(256) NOT NULL,
               `password` varchar(256) NOT NULL,
               `email` varchar(256) NOT NULL,
-              PRIMARY KEY (`username`),
-            )
+              PRIMARY KEY (`username`)
+            );
             """,
 
             """
             CREATE TABLE IF NOT EXISTS  auth (
               `username` varchar(256) NOT NULL,
               `authToken` varchar(256) NOT NULL,
-              PRIMARY KEY (`authToken`),
-            )
+              PRIMARY KEY (`authToken`)
+            );
+            """,
             """
+            CREATE TABLE IF NOT EXISTS  game (
+              `gameID` int NOT NULL AUTO_INCREMENT,
+              `whiteUsername` varchar(256) NOT NULL,
+              `blackUsername` varchar(256) NOT NULL,
+              `gameName` varchar(256) NOT NULL,
+              `gameJson` TEXT DEFAULT NULL,
+              PRIMARY KEY (`gameID`)
+            );
+            """
+
     };
 
     static void configureDatabase() throws DataAccessException {
@@ -141,9 +158,8 @@ public class DatabaseManager {
             try (var ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
                 for (var i = 0; i < params.length; i++) {
                     var param = params[i];
-                    if (param instanceof String p) {ps.setString(i + 1, p);}
+                    if (param instanceof String p) {ps.setString(i+1, p);}
                     else if (param instanceof Integer p) {ps.setInt(i + 1, p);}
-                    //else if (param instanceof PetType p) {ps.setString(i + 1, p.toString());}
                     else if (param == null){ ps.setNull(i + 1, NULL);}
                 }
                 ps.executeUpdate();

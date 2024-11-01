@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class Server {
 
-    private final AuthDataAccess authAccess = new MemoryAuthDAO();
+    private final AuthDataAccess authAccess;
     private final UserDataAccess userAccess;
     private final UserService userService;
     private final GameDataAccess gameAccess;
@@ -24,6 +24,7 @@ public class Server {
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
+        this.authAccess = new MySqlAuthDAO();
         userService = new UserService(userAccess,authAccess);
         gameAccess = new MemoryGameDAO();
          gameService = new GameService(gameAccess, authAccess);

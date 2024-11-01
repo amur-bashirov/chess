@@ -47,7 +47,7 @@ public class MySqlUserDAO implements UserDataAccess{
 
     @Override
     public void creatUser(UserData data) throws DataAccessException {
-        var statement = "INSERT INTO user (username, password, email) VALUES (?, ?, ?, ?)";
+        var statement = "INSERT INTO user (username, password, email) VALUES (?, ?, ?)";
         executeUpdate(statement, data.username(), data.password(), data.email()) ;
     }
 
@@ -57,22 +57,14 @@ public class MySqlUserDAO implements UserDataAccess{
         executeUpdate(statement);
     }
 
-    private UserData readUser(ResultSet rs) throws SQLException {
-        var json = rs.getString("json");
-        var UserData = new Gson().fromJson(json, UserData.class);
-        return UserData;
-    }
 
 
 
 
 
-    void storeUserPassword(String username, String clearTextPassword) throws DataAccessException {
-        String hashedPassword = BCrypt.hashpw(clearTextPassword, BCrypt.gensalt());
 
-        // write the hashed password in database along with the user's other information
-        //writeHashedPasswordToDatabase(username, hashedPassword);
-    }
+
+
 
 
 }

@@ -7,11 +7,11 @@ import java.util.ArrayList;
 
 public interface GameDataAccess {
 
-    ArrayList<GameData> listGames();
-    GameData getGame(String gameName);
-    GameData createGame(String gameName);
-    GameData getGame2(int gameID);
-    void updateGame(String gameColor, int gameID, String username) throws OccupiedException;
-    void clear();
+    ArrayList<GameData> listGames() throws DataAccessException;
+    GameData getGame(String gameName) throws DataAccessException;
+    GameData createGame(String gameName) throws DataAccessException;
+    GameData getGame2(int gameID) throws DataAccessException;
+    void updateGame(String gameColor, int gameID, String username) throws OccupiedException, DataAccessException;
+    void clear() throws DataAccessException;
 
 }

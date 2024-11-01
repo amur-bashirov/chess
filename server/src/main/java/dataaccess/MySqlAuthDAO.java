@@ -14,13 +14,13 @@ public class MySqlAuthDAO implements AuthDataAccess{
         AuthData authData = new AuthData(UUID.randomUUID().toString(),data.username());
         String authToken = authData.authToken();
         String username = authData.username();
-        var statement = "INSERT INTO auth (authToken, username) VALUES (?, ?, ?, ?)";
+        var statement = "INSERT INTO auth (authToken, username) VALUES (?, ?)";
         try {
             executeUpdate(statement, authToken, username); ;
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
-        return null;
+        return authData;
     }
 
     @Override
@@ -52,7 +52,7 @@ public class MySqlAuthDAO implements AuthDataAccess{
 
     @Override
     public void clear() throws DataAccessException {
-        var statement = "TRUNCATE user";
+        var statement = "TRUNCATE auth";
         executeUpdate(statement);
 
     }
