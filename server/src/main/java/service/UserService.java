@@ -6,6 +6,7 @@ import dataaccess.DataAccessException;
 import dataaccess.UserDataAccess;
 import model.AuthData;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 import server.LoginRequest;
 import server.LogoutRequest;
 import server.RegisterRequest;
@@ -23,8 +24,8 @@ public class UserService {
     }
 
     public RegisterResult register(RegisterRequest request) throws OccupiedException, DataAccessException {
-        //create hash passwrod in here
-        UserData data = new UserData(request.username(),request.password(),request.email());
+        String hashedPassword = BCrypt.hashpw(request.password(), BCrypt.gensalt());
+        UserData data = new UserData(request.username(),hashedPassword,request.email());
         UserData data2 = userMethods.getUser(data.username());
         if (data2 == null){
             userMethods.creatUser(data);
@@ -38,9 +39,9 @@ public class UserService {
     public LoginResult login(LoginRequest request) throws DataAccessException{
         UserData data = userMethods.getUser(request.username());
         if(data != null) {
-            //BCrypt.checkpw(providedClearTextPassword, hashedPassword);
-            if (data.password().equals(request.password())) {
+            if (BCrypt.checkpw(data.password(), request.password())) {
                 AuthData auth = authMethods.createAuth(data);
+                AuthData auth2 = authMethods.getAuth(auth.authToken());
                 LoginResult result = new LoginResult(auth.username(), auth.authToken());
                 return result;
             }
