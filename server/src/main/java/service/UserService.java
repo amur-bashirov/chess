@@ -39,7 +39,7 @@ public class UserService {
     public LoginResult login(LoginRequest request) throws DataAccessException{
         UserData data = userMethods.getUser(request.username());
         if(data != null) {
-            if (BCrypt.checkpw(data.password(), request.password())) {
+            if (BCrypt.checkpw(request.password(),data.password())) {
                 AuthData auth = authMethods.createAuth(data);
                 AuthData auth2 = authMethods.getAuth(auth.authToken());
                 LoginResult result = new LoginResult(auth.username(), auth.authToken());

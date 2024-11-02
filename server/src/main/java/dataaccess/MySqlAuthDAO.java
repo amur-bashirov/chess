@@ -18,17 +18,7 @@ public class MySqlAuthDAO implements AuthDataAccess{
         String username = data.username();
 
         try (var conn = DatabaseManager.getConnection()) {
-            // First, check if the user already has an auth entry
-            var selectStatement = "SELECT authToken FROM auth WHERE username=?";
-            try (var ps = conn.prepareStatement(selectStatement)) {
-                ps.setString(1, username);
 
-                try (var rs = ps.executeQuery()) {
-                    if (rs.next()) {
-                        throw new DataAccessException("AuthData already exists for username: " + username);
-                    }
-                }
-            }
 
             var insertStatement = "INSERT INTO auth (authToken, username) VALUES (?, ?)";
             try (var ps = conn.prepareStatement(insertStatement)) {

@@ -186,59 +186,63 @@ public class DataBaseManagerTests {
     @Test
     public void successGetGameTest() throws DataAccessException {
         ChessGame game = new ChessGame();
-        GameData data = new GameData(1,null,null,"test",game);
         String gameName = "test";
-        gameAccess.createGame(gameName);
+        GameData createdGame = gameAccess.createGame(gameName);
         GameData data2 = gameAccess.getGame(gameName);
-        Assertions.assertEquals(data, data2);
+        Assertions.assertEquals(createdGame, data2);
         gameAccess.clear();
     }
 
     @Test
     public void failGetGameTest() throws DataAccessException {
-        ChessGame game = new ChessGame();
-        GameData data = new GameData(1,null,null,"test",game);
         String gameName = "test";
         gameAccess.createGame(gameName);
         gameAccess.clear();
         GameData data2 = gameAccess.getGame(gameName);
-        Assertions.assertNull(data2);
+        Assertions.assertNull(data2, "Expected no game to be found after clearing.");
         gameAccess.clear();
     }
 
     @Test
     public void successGameClearTest() throws DataAccessException {
-        ChessGame game = new ChessGame();
-        GameData data = new GameData(1,null,null,"test",game);
         String gameName = "test";
         gameAccess.createGame(gameName);
         gameAccess.clear();
         GameData data2 = gameAccess.getGame(gameName);
-        Assertions.assertNull(data2);
+        Assertions.assertNull(data2, "Expected no game to be found after clearing.");
     }
 
     @Test
     public void successUpdateGameTest() throws DataAccessException, OccupiedException {
         ChessGame game = new ChessGame();
-        GameData data = new GameData(1,"test",null,"test",game);
         String gameName = "test";
-        gameAccess.createGame(gameName);
-        gameAccess.updateGame("WHITE", 1, "test");
-        GameData data2 = gameAccess.getGame(gameName);
-        Assertions.assertEquals(data, data2);
+        String userName = "user";
+        GameData createdGame = gameAccess.createGame(gameName);
+
+        gameAccess.updateGame("WHITE", createdGame.gameID(), "user"); // Use the dynamically retrieved game ID
+        GameData updatedGame = gameAccess.getGame(gameName);
+
+        Assertions.assertEquals(updatedGame.whiteUsername(),userName);
+        Assertions.assertNull(updatedGame.blackUsername());
+        Assertions.assertEquals(createdGame.gameName(), updatedGame.gameName());
+        Assertions.assertEquals(createdGame.game(), updatedGame.game());
+
         gameAccess.clear();
     }
 
     @Test
     public void failUpdateGameTest() throws DataAccessException, OccupiedException {
-        ChessGame game = new ChessGame();
-        GameData data = new GameData(1,"test",null,"test",game);
         String gameName = "test";
-        gameAccess.createGame(gameName);
-        gameAccess.updateGame("WHITE", 1, "test1");
-        Assertions.assertThrows(OccupiedException.class, () -> gameAccess.updateGame("WHITE", 1, "test2"));
+        GameData createdGame = gameAccess.createGame(gameName); // Create the game
+        gameAccess.updateGame("WHITE", createdGame.gameID(), "test1"); // Update the game
+
+        Assertions.assertThrows(OccupiedException.class, () -> {
+            gameAccess.updateGame("WHITE", createdGame.gameID(), "test2"); // Attempt to update again
+        });
+
         gameAccess.clear();
     }
+
 
     @Test
     public void succeessListGamesTest() throws DataAccessException {
