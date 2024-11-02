@@ -91,12 +91,6 @@ public class DatabaseManager {
 
     }
     private static final String[] CREATE_STATEMENTS = {
-//            """
-//            CREATE TABLE IF NOT EXISTS  user (
-//              `username` int,
-//              PRIMARY KEY (`username`)
-//            );
-//            """,
             """
             CREATE TABLE IF NOT EXISTS  user (
               `username` varchar(256) NOT NULL,
@@ -164,12 +158,6 @@ public class DatabaseManager {
                 }
                 ps.executeUpdate();
 
-//                var rs = ps.getGeneratedKeys();
-//                if (rs.next()) {
-//                    return rs.getInt(1);
-//                }
-//
-//                return 0;
             }
         } catch (SQLException e) {
             throw new DataAccessException( String.format("unable to update database: %s, %s", statement, e.getMessage()));
