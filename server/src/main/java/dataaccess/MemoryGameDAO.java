@@ -46,6 +46,9 @@ public class MemoryGameDAO implements GameDataAccess{
     public GameData createGame(String gameName) {
 //        UUID uuid = UUID.randomUUID();
 //        int GameID = (int) (uuid.getLeastSignificantBits() & 0xFFFFFFFFL);
+        if (gameName == null || gameName == ""){
+            return null;
+        }
         ChessGame game = new ChessGame();
         GameData data = new GameData(gameID++,null,null,gameName,game);
         System.out.println("New game created:" + data.toString());

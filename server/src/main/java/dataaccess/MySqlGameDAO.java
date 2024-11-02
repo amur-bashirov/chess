@@ -76,7 +76,9 @@ public class MySqlGameDAO implements GameDataAccess {
         ChessGame game = new ChessGame();
         String jsonString = new Gson().toJson(game);
         var statement = "INSERT INTO game (gameName, gameJson) VALUES (?, ?)";
-
+        if (gameName == null || gameName == ""){
+            return null;
+        }
         try (var conn = DatabaseManager.getConnection();
              var ps = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS)) {
 

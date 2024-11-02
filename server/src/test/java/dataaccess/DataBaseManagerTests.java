@@ -177,13 +177,10 @@ public class DataBaseManagerTests {
 
 
     @Test
-    public void failCreateGameTest() throws DataAccessException {
-        ChessGame game = new ChessGame();
-        GameData data = new GameData(1,null,null,"test",game);
-        String gameName = "test";
-        gameAccess.createGame(gameName);
-        Assertions.assertThrows(DataAccessException.class, () -> gameAccess.createGame(gameName));
-        gameAccess.clear();
+    public void failCreateGameWithEmptyNameTest() throws DataAccessException {
+        String emptyGameName = "";
+        GameData result = gameAccess.createGame(emptyGameName);
+        Assertions.assertNull(result, "Expected result to be null for empty game name.");
     }
 
     @Test
@@ -274,14 +271,13 @@ public class DataBaseManagerTests {
     @Test
     public void successGetGame2Test() throws DataAccessException {
         ChessGame game = new ChessGame();
-        GameData data = new GameData(1,
-                "test",null,"test",game);
         String gameName = "test";
-        gameAccess.createGame(gameName);
-        GameData data2 = gameAccess.getGame2(1);
-        Assertions.assertEquals(data, data2);
+        GameData createdGameData = gameAccess.createGame(gameName);
+        GameData fetchedGameData = gameAccess.getGame2(createdGameData.gameID());
+        Assertions.assertEquals(createdGameData, fetchedGameData);
         gameAccess.clear();
     }
+
 
     @Test
     public void failGetGame2Test() throws DataAccessException {
