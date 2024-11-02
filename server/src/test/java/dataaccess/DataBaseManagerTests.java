@@ -164,9 +164,12 @@ public class DataBaseManagerTests {
         GameData retrievedGame = gameAccess.getGame(gameName);
 
 
-        Assertions.assertNotNull(retrievedGame, "Retrieved game should not be null");
-        Assertions.assertTrue(retrievedGame.gameID() > 0, "Game ID should be greater than 0");
-        Assertions.assertEquals(gameName, retrievedGame.gameName(), "Game name should match the one created");
+        Assertions.assertNotNull(retrievedGame,
+                "Retrieved game should not be null");
+        Assertions.assertTrue(retrievedGame.gameID() > 0,
+                "Game ID should be greater than 0");
+        Assertions.assertEquals(gameName,
+                retrievedGame.gameName(), "Game name should match the one created");
 
 
         gameAccess.clear();
@@ -258,7 +261,8 @@ public class DataBaseManagerTests {
     @Test
     public void failListGamesTest() throws DataAccessException {
         ChessGame game = new ChessGame();
-        GameData data = new GameData(1,"test",null,"test",game);
+        GameData data = new GameData(1,
+                "test",null,"test",game);
         String gameName = "test";
         gameAccess.createGame(gameName);
         gameAccess.clear();
@@ -270,7 +274,8 @@ public class DataBaseManagerTests {
     @Test
     public void successGetGame2Test() throws DataAccessException {
         ChessGame game = new ChessGame();
-        GameData data = new GameData(1,"test",null,"test",game);
+        GameData data = new GameData(1,
+                "test",null,"test",game);
         String gameName = "test";
         gameAccess.createGame(gameName);
         GameData data2 = gameAccess.getGame2(1);
@@ -281,7 +286,7 @@ public class DataBaseManagerTests {
     @Test
     public void failGetGame2Test() throws DataAccessException {
         ChessGame game = new ChessGame();
-        GameData data = new GameData(1,"test",null,"test",game);
+        GameData data = new GameData(1, "test",null,"test",game);
         String gameName = "test";
         gameAccess.createGame(gameName);
         gameAccess.clear();

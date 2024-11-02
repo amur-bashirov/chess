@@ -1,16 +1,12 @@
 package dataaccess;
 
 import chess.ChessGame;
-import chess.ChessPiece;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonDeserializer;
-import com.mysql.cj.protocol.Resultset;
 import model.GameData;
-import model.UserData;
 import service.OccupiedException;
 
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -33,41 +29,39 @@ public class MySqlGameDAO implements GameDataAccess {
                     "whiteUsername, blackUsername, gameName, gameJson FROM game")) {
                 try (var rs = preparedStatement.executeQuery()) {
                     while (rs.next()) {
-                        int gameID = rs.getInt("gameID");
-                        String whiteUsername = rs.getString("whiteUsername");
-                        String blackUsername = rs.getString("blackUsername");
-                        String gameName = rs.getString("gameName");
-                        String newGameJson  = rs.getString("gameJson");
-                        ChessGame game = new Gson().fromJson(newGameJson, ChessGame.class);
-                        GameData newGame = new GameData(gameID,whiteUsername,blackUsername,gameName,game);
+                        GameData newGame = convertGame(rs);
                         gameList.add(newGame);
-
                     }
                     return gameList;
                 }
             }
-
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
+    public GameData convertGame(ResultSet rs) throws SQLException {
+        int gameID = rs.getInt("gameId");
+        String whiteUsername = rs.getString("whiteUsername");
+        String blackUsername = rs.getString("blackUsername");
+        String gameName = rs.getString("gameName");
+        String gameJson = rs.getString("gameJson");
+
+        ChessGame game = new Gson().fromJson(gameJson, ChessGame.class);
+        return new GameData(gameID, whiteUsername, blackUsername, gameName, game);
+    }
+
     @Override
     public GameData getGame(String gameName) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
-            var statement = "SELECT gameId, whiteUsername, blackUsername, gameName, gameJson FROM game WHERE gameName=?";
+            var statement = "SELECT gameId, whiteUsername, blackUsername, gameName," +
+                    " gameJson FROM game WHERE gameName=?";
             try (var ps = conn.prepareStatement(statement)) {
                 ps.setString(1, gameName);
                 try (var rs = ps.executeQuery()) {
                     if (rs.next()) {
-                        String whiteUsername = rs.getString("whiteUsername");
-                        String blackUsername = rs.getString("blackUsername");
-                        String newGameName = rs.getString("gameName");
-                        String gameJson  = rs.getString("gameJson");
-                        ChessGame game = new Gson().fromJson(gameJson, ChessGame.class);
-                        int newGameID = rs.getInt("gameId");
-                        GameData createdGame = new GameData(newGameID,whiteUsername,blackUsername,newGameName,game);
-                        return createdGame;
+                        GameData game = convertGame(rs);
+                        return game;
                     }
                 }
             }
@@ -81,16 +75,15 @@ public class MySqlGameDAO implements GameDataAccess {
     public GameData createGame(String gameName) throws DataAccessException {
         ChessGame game = new ChessGame();
         String jsonString = new Gson().toJson(game);
-        var statement = "INSERT INTO game (whiteUsername, blackUsername, gameName, gameJson) VALUES (?, ?, ?, ?)";
+        var statement = "INSERT INTO game (gameName, gameJson) VALUES (?, ?)";
 
         try (var conn = DatabaseManager.getConnection();
              var ps = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS)) {
 
 
-            ps.setString(1, "");
-            ps.setString(2, "");
-            ps.setString(3, gameName);
-            ps.setString(4, jsonString);
+
+            ps.setString(1, gameName);
+            ps.setString(2, jsonString);
 
 
             ps.executeUpdate();
@@ -112,18 +105,13 @@ public class MySqlGameDAO implements GameDataAccess {
     @Override
     public GameData getGame2(int gameID) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
-            var statement = "SELECT gameId, whiteUsername, blackUsername, gameName, gameJson FROM game WHERE gameID=?";
+            var statement = "SELECT gameId, whiteUsername, blackUsername," +
+                    " gameName, gameJson FROM game WHERE gameID=?";
             try (var ps = conn.prepareStatement(statement)) {
                 ps.setInt(1, gameID);
                 try (var rs = ps.executeQuery()) {
                     if (rs.next()) {
-                        String newGameName = rs.getString("gameName");
-                        String newGameJson  = rs.getString("gameJson");
-                        ChessGame game = new Gson().fromJson(newGameJson, ChessGame.class);
-                        String newWhiteUsername = rs.getString("whiteUsername");
-                        String newBlackUsername = rs.getString("blackUsername");
-                        int newGameID = rs.getInt("gameId");
-                        GameData newGame = new GameData(newGameID,newWhiteUsername,newBlackUsername,newGameName,game);
+                        GameData newGame = convertGame(rs);
                         return newGame;
                     }
                 }
@@ -135,7 +123,8 @@ public class MySqlGameDAO implements GameDataAccess {
     }
 
     @Override
-    public void updateGame(String gameColor, int gameID, String username) throws OccupiedException, DataAccessException {
+    public void updateGame(String gameColor, int gameID,
+                           String username) throws OccupiedException, DataAccessException {
 
         GameData data = getGame2(gameID);
         if (Objects.equals(gameColor, "WHITE") && data.whiteUsername() == null) {
@@ -155,11 +144,4 @@ public class MySqlGameDAO implements GameDataAccess {
         var statement = "TRUNCATE game";
         executeUpdate(statement);
     }
-
-//    private static class GameDeserializer implements JsonDeserializer<ChessPiece> {
-//
-//        @Override
-//
-//    }
-
 }
