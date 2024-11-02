@@ -41,11 +41,10 @@ public class DataBaseManagerTests {
 
     @Test
     public void successCreateUserTest() throws DataAccessException {
-        UserData data = new UserData("test", "test", "test");
+        UserData data = new UserData("username", "password", "email");
         userAccess.creatUser(data);
         UserData data2 = userAccess.getUser(data.username());
         Assertions.assertEquals(data, data2);
-        userAccess.clear();
     }
 
     @Test
@@ -87,13 +86,11 @@ public class DataBaseManagerTests {
 
     @Test
     public void successGetAuthTest() throws DataAccessException {
-        UserData data = new UserData("test", "test", "test");
+        UserData data = new UserData("username", "password", "email");
         userAccess.creatUser(data);
         AuthData auth = authAccess.createAuth(data);
         AuthData auth2 = authAccess.getAuth(auth.authToken());
         Assertions.assertEquals(auth, auth2);
-        userAccess.clear();
-        authAccess.clear();
     }
 
     @Test
@@ -104,8 +101,6 @@ public class DataBaseManagerTests {
         authAccess.deleteAuth(auth);
         AuthData auth2 = authAccess.getAuth(auth.authToken());
         Assertions.assertNull(auth2);
-        userAccess.clear();
-        authAccess.clear();
     }
 
     @Test

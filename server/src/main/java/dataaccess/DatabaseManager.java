@@ -90,7 +90,7 @@ public class DatabaseManager {
         }
 
     }
-    private static final String[] CreateStatements = {
+    private static final String[] CREATE_STATEMENTS = {
 //            """
 //            CREATE TABLE IF NOT EXISTS  user (
 //              `username` int,
@@ -129,7 +129,7 @@ public class DatabaseManager {
     static void configureDatabase() throws DataAccessException {
         DatabaseManager.createDatabase();
         try (var conn = DatabaseManager.getConnection()) {
-            for (var statement : CreateStatements) {
+            for (var statement : CREATE_STATEMENTS) {
                 try (var preparedStatement = conn.prepareStatement(statement)) {
                     preparedStatement.executeUpdate();
                 }
