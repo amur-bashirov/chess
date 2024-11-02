@@ -14,6 +14,9 @@ public class MySqlAuthDAO implements AuthDataAccess{
 
     @Override
     public AuthData createAuth(UserData data) throws DataAccessException {
+        if (data == null){
+            return null;
+        }
         String authToken = UUID.randomUUID().toString();
         String username = data.username();
 

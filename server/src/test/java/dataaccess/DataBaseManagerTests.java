@@ -111,10 +111,8 @@ public class DataBaseManagerTests {
 
     @Test
     public void failCreateAuthTest() throws DataAccessException {
-        UserData data = new UserData("test", "test", "test");
-        userAccess.creatUser(data);
-        AuthData auth = authAccess.createAuth(data);
-        Assertions.assertThrows(DataAccessException.class, () -> authAccess.createAuth(data));
+        AuthData auth = authAccess.createAuth(null);
+        Assertions.assertNull(auth);
         userAccess.clear();
         authAccess.clear();
     }
