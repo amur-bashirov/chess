@@ -59,12 +59,11 @@ public class DataBaseManagerTests {
 
     @Test
     public void clearTest() throws DataAccessException {
-        UserData data = new UserData("test", "test", "test");
-        userAccess.creatUser(data);
+        UserData newData = new UserData("username", "password", "email");
+        userAccess.creatUser(newData);
         userAccess.clear();
-        UserData data2 = userAccess.getUser(data.username());
+        UserData data2 = userAccess.getUser(newData.username());
         Assertions.assertNull(data2);
-        userAccess.clear();
     }
 
     @Test
@@ -294,7 +293,7 @@ public class DataBaseManagerTests {
     }
 
     @Test
-    public void SuccessMySqlClearTest() throws DataAccessException {
+    public void successMySqlClearTest() throws DataAccessException {
         String gameName = "test";
         UserData data = new UserData("test", "test", "test");
         userAccess.creatUser(data);
