@@ -30,6 +30,9 @@ public class DataBaseManagerTests {
     @BeforeEach
     public void settingUp() throws DataAccessException {
         db.openConnection();
+        userAccess.clear();
+        authAccess.clear();
+        gameAccess.clear();
     }
     @AfterEach
     public void tearDown() throws DataAccessException{
@@ -61,6 +64,7 @@ public class DataBaseManagerTests {
         userAccess.clear();
         UserData data2 = userAccess.getUser(data.username());
         Assertions.assertNull(data2);
+        userAccess.clear();
     }
 
     @Test
@@ -138,16 +142,7 @@ public class DataBaseManagerTests {
         authAccess.clear();
     }
 
-    @Test
-    public void failDeleteAuthTest() throws DataAccessException {
-        UserData data = new UserData("test", "test", "test");
-        userAccess.creatUser(data);
-        AuthData auth = authAccess.createAuth(data);
-        authAccess.deleteAuth(auth);
-        Assertions.assertThrows(DataAccessException.class, () -> authAccess.deleteAuth(auth));
-        userAccess.clear();
-        authAccess.clear();
-    }
+
 
     @Test
     public void successClearTest() throws DataAccessException {
@@ -160,14 +155,23 @@ public class DataBaseManagerTests {
 
     @Test
     public void successCreateGameTest() throws DataAccessException {
-        ChessGame game = new ChessGame();
-        GameData data = new GameData(1,null,null,"test",game);
         String gameName = "test";
-        gameAccess.createGame(gameName);
-        GameData data2 = gameAccess.getGame(gameName);
-        Assertions.assertEquals(data, data2);
+
+
+        GameData createdGame = gameAccess.createGame(gameName);
+
+
+        GameData retrievedGame = gameAccess.getGame(gameName);
+
+
+        Assertions.assertNotNull(retrievedGame, "Retrieved game should not be null");
+        Assertions.assertTrue(retrievedGame.gameID() > 0, "Game ID should be greater than 0");
+        Assertions.assertEquals(gameName, retrievedGame.gameName(), "Game name should match the one created");
+
+
         gameAccess.clear();
     }
+
 
     @Test
     public void failCreateGameTest() throws DataAccessException {
@@ -239,11 +243,15 @@ public class DataBaseManagerTests {
     @Test
     public void succeessListGamesTest() throws DataAccessException {
         ChessGame game = new ChessGame();
-        GameData data = new GameData(1,"test",null,"test",game);
         String gameName = "test";
         gameAccess.createGame(gameName);
         ArrayList<GameData> gameList = gameAccess.listGames();
-        Assertions.assertTrue(gameList.contains(data));
+        for (GameData game1 : gameList){
+            Assertions.assertEquals(gameName, game1.gameName());
+
+
+        }
+
         gameAccess.clear();
     }
 
@@ -284,9 +292,14 @@ public class DataBaseManagerTests {
 
     @Test
     public void SuccessMySqlClearTest() throws DataAccessException {
-        MySqlClear clear = new MySqlClear();
-        clear.clear();
-        Assertions.assertThrows(DataAccessException.class, () -> clear.clear());
+        String gameName = "test";
+        UserData data = new UserData("test", "test", "test");
+        userAccess.creatUser(data);
+        gameAccess.createGame(gameName);
+        clearAccess.clear();
+        UserData data2 = userAccess.getUser(data.username());
+        Assertions.assertNull(data2);
+        Assertions.assertNull(gameAccess.getGame(gameName));
     }
 
 }

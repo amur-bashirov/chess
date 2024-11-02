@@ -26,9 +26,13 @@ public class Server {
         }
         this.authAccess = new MySqlAuthDAO();
         userService = new UserService(userAccess,authAccess);
-        gameAccess = new MemoryGameDAO();
-         gameService = new GameService(gameAccess, authAccess);
-         clearAccess = new MemoryClearDAO(authAccess, userAccess, gameAccess);
+        try {
+            this.gameAccess = new MySqlGameDAO();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+        gameService = new GameService(gameAccess, authAccess);
+         this.clearAccess = new MySqlClear();
          clearService = new ClearService(clearAccess);
     }
 

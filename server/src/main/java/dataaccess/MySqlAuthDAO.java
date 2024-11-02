@@ -4,24 +4,47 @@ import com.google.gson.Gson;
 import model.AuthData;
 import model.UserData;
 
+import java.sql.SQLException;
 import java.util.UUID;
 
 import static dataaccess.DatabaseManager.executeUpdate;
 
 public class MySqlAuthDAO implements AuthDataAccess{
+
+
     @Override
-    public AuthData createAuth(UserData data) {
-        AuthData authData = new AuthData(UUID.randomUUID().toString(),data.username());
-        String authToken = authData.authToken();
-        String username = authData.username();
-        var statement = "INSERT INTO auth (authToken, username) VALUES (?, ?)";
-        try {
-            executeUpdate(statement, authToken, username); ;
-        } catch (DataAccessException e) {
-            throw new RuntimeException(e);
+    public AuthData createAuth(UserData data) throws DataAccessException {
+        String authToken = UUID.randomUUID().toString();
+        String username = data.username();
+
+        try (var conn = DatabaseManager.getConnection()) {
+            // First, check if the user already has an auth entry
+            var selectStatement = "SELECT authToken FROM auth WHERE username=?";
+            try (var ps = conn.prepareStatement(selectStatement)) {
+                ps.setString(1, username);
+
+                try (var rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        throw new DataAccessException("AuthData already exists for username: " + username);
+                    }
+                }
+            }
+
+            var insertStatement = "INSERT INTO auth (authToken, username) VALUES (?, ?)";
+            try (var ps = conn.prepareStatement(insertStatement)) {
+                ps.setString(1, authToken);
+                ps.setString(2, username);
+                ps.executeUpdate();
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException("Database error while creating AuthData for username: " + username);
         }
-        return authData;
+
+
+        return new AuthData(authToken, username);
     }
+
+
 
     @Override
     public AuthData getAuth(String token) throws DataAccessException {

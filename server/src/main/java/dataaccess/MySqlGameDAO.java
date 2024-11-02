@@ -30,7 +30,7 @@ public class MySqlGameDAO implements GameDataAccess {
         ArrayList<GameData> gameList = new ArrayList();
         try(var conn = DatabaseManager.getConnection()){
             try (var preparedStatement = conn.prepareStatement("SELECT gameId, " +
-                    "whiteUsername, blackUsername, gameName, gameJson FROM game WHERE gameName=?")) {
+                    "whiteUsername, blackUsername, gameName, gameJson FROM game")) {
                 try (var rs = preparedStatement.executeQuery()) {
                     while (rs.next()) {
                         int gameID = rs.getInt("gameID");
@@ -60,14 +60,14 @@ public class MySqlGameDAO implements GameDataAccess {
                 ps.setString(1, gameName);
                 try (var rs = ps.executeQuery()) {
                     if (rs.next()) {
+                        String whiteUsername = rs.getString("whiteUsername");
+                        String blackUsername = rs.getString("blackUsername");
                         String newGameName = rs.getString("gameName");
-                        String newGameJson  = rs.getString("gameJson");
-                        ChessGame game = new Gson().fromJson(newGameJson, ChessGame.class);
-                        String newWhiteUsername = rs.getString("whiteUsername");
-                        String newBlackUsername = rs.getString("blackUsername");
+                        String gameJson  = rs.getString("gameJson");
+                        ChessGame game = new Gson().fromJson(gameJson, ChessGame.class);
                         int newGameID = rs.getInt("gameId");
-                        GameData newGame = new GameData(newGameID,newWhiteUsername,newBlackUsername,newGameName,game);
-                        return newGame;
+                        GameData createdGame = new GameData(newGameID,whiteUsername,blackUsername,newGameName,game);
+                        return createdGame;
                     }
                 }
             }
@@ -81,9 +81,32 @@ public class MySqlGameDAO implements GameDataAccess {
     public GameData createGame(String gameName) throws DataAccessException {
         ChessGame game = new ChessGame();
         String jsonString = new Gson().toJson(game);
-        var statement = "INSERT INTO game(whiteUsername, blackUsername, gameName, gameJson) VALUES (?, ?, ?, ?)";
-        executeUpdate(statement,null,null,gameName,jsonString) ;
-        return new GameData(0,null,null,gameName,game);
+        var statement = "INSERT INTO game (whiteUsername, blackUsername, gameName, gameJson) VALUES (?, ?, ?, ?)";
+
+        try (var conn = DatabaseManager.getConnection();
+             var ps = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS)) {
+
+
+            ps.setString(1, "");
+            ps.setString(2, "");
+            ps.setString(3, gameName);
+            ps.setString(4, jsonString);
+
+
+            ps.executeUpdate();
+
+
+            try (var generatedKeys = ps.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    int gameID = generatedKeys.getInt(1);
+                    return new GameData(gameID, null, null, gameName, game);
+                } else {
+                    throw new DataAccessException("Failed to retrieve generated gameID.");
+                }
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException("Database error while creating game: " + e.getMessage());
+        }
     }
 
     @Override
