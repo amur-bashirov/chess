@@ -1,16 +1,10 @@
 package dataaccess;
 
-import static dataaccess.DatabaseManager.createDatabase;
 import static dataaccess.DatabaseManager.executeUpdate;
-import static java.sql.Statement.RETURN_GENERATED_KEYS;
-import static java.sql.Types.NULL;
 
-import com.google.gson.Gson;
+import DataObjects.DataAccessException;
 import model.UserData;
-import org.mindrot.jbcrypt.BCrypt;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class MySqlUserDAO implements UserDataAccess{

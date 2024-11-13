@@ -1,5 +1,6 @@
 package dataaccess;
 
+import DataObjects.DataAccessException;
 import model.UserData;
 
 

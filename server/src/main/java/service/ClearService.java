@@ -1,8 +1,7 @@
 package service;
 
 import dataaccess.ClearAccess;
-import dataaccess.DataAccessException;
-import dataaccess.MemoryClearDAO;
+import DataObjects.DataAccessException;
 
 public class ClearService {
     private final ClearAccess clearAccess;

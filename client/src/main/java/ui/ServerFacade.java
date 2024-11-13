@@ -1,16 +1,14 @@
 package ui;
 
-import DataObjects.LoginRequest;
-import DataObjects.LoginResult;
+import DataObjects.*;
 import com.google.gson.Gson;
-
-import DataObjects.RegisterRequest;
-import DataObjects.RegisterResult;
+import DataObjects.OccupiedException;
 
 
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 public class ServerFacade {
@@ -43,10 +41,19 @@ public class ServerFacade {
             throwIfNotSuccessful(http);
             return readBody(http, responseClass);
         } catch (ResponseException ex) {
-            throw new ResponseException(500, ex.getMessage());
+            System.out.println("ResponseException");
         } catch (IOException ex){
             System.out.println("IOException");
+        } catch (URISyntaxException e) {
+            System.out.println("Incorrect Syntax, dummy.");
+        } catch (BadRequestsException ex){
+            System.out.println("Bad Request, dummy.");
+        } catch (OccupiedException ex){
+            System.out.println("It is already taken, dummy.");
+        } catch(DataAccessException ex){
+            System.out.println("It is not accessible, dummy.");
         }
+        return null;
     }
 
 
@@ -60,9 +67,19 @@ public class ServerFacade {
         }
     }
 
-    private void throwIfNotSuccessful(HttpURLConnection http) throws IOException, ResponseException {
+    private void throwIfNotSuccessful(HttpURLConnection http) throws IOException,
+            ResponseException, BadRequestsException, OccupiedException, DataAccessException {
         var status = http.getResponseCode();
         if (!isSuccessful(status)) {
+            if (status == 400) {
+                throw new BadRequestsException("Bad Request: " + status);
+            }
+            if (status == 403){
+                throw new OccupiedException("Already occupied" + status);
+            }
+            if (status == 401){
+                throw new DataAccessException("It is not Accessible"+status);
+            }
             throw new ResponseException(status, "failure: " + status);
         }
     }

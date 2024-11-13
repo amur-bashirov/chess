@@ -191,7 +191,7 @@ public class Server {
         var body = new Gson().toJson(Map.of("message", String.format("Error: %s", e.getMessage()), "success", false));
         res.body(body);
         res.type("application/json");
-        res.status(400); // Set HTTP status to 400 Bad Request
+        res.status(400);
         return body;
     }
 
@@ -199,7 +199,7 @@ public class Server {
         var body = new Gson().toJson(Map.of("message", String.format("Error: %s", e.getMessage()), "success", false));
         res.body(body);
         res.type("application/json");
-        res.status(403); // Set HTTP status to 400 Bad Request
+        res.status(403);
         return body;
     }
 

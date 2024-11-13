@@ -1,5 +1,7 @@
 package dataaccess;
 
+import DataObjects.DataAccessException;
+
 import static dataaccess.DatabaseManager.executeUpdate;
 
 public class MySqlClear implements ClearAccess {

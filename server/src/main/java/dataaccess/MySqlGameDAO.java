@@ -1,9 +1,10 @@
 package dataaccess;
 
+import DataObjects.DataAccessException;
 import chess.ChessGame;
 import com.google.gson.Gson;
 import model.GameData;
-import service.OccupiedException;
+import DataObjects.OccupiedException;
 
 
 import java.sql.ResultSet;

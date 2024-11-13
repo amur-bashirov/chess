@@ -1,7 +1,8 @@
 package dataaccess;
 
+import DataObjects.DataAccessException;
 import model.GameData;
-import service.OccupiedException;
+import DataObjects.OccupiedException;
 
 import java.util.ArrayList;
 

@@ -1,5 +1,6 @@
 package dataaccess;
-import com.google.gson.Gson;
+import DataObjects.DataAccessException;
+
 import java.sql.*;
 import java.util.Properties;
 

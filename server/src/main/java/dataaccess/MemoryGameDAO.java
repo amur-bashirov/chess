@@ -4,11 +4,9 @@ import java.util.ArrayList;
 
 import chess.ChessGame;
 import model.GameData;
-import service.OccupiedException;
+import DataObjects.OccupiedException;
 
 import java.util.Objects;
-import java.util.UUID;
-
 
 
 public class MemoryGameDAO implements GameDataAccess{

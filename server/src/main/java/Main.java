@@ -1,4 +1,4 @@
-import dataaccess.DataAccessException;
+import DataObjects.DataAccessException;
 import DataObjects.Server;
 
 public class Main {
