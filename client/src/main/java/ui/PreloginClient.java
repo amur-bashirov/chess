@@ -9,6 +9,7 @@ import DataObjects.RegisterResult;
 import java.util.Arrays;
 
 import static java.awt.Color.ORANGE;
+import static ui.EscapeSequences.SET_TEXT_COLOR_ORANGE;
 
 public class PreloginClient {
 
@@ -30,6 +31,7 @@ public class PreloginClient {
             return switch (cmd) {
                 case "register" -> register(params);
                 case "login" -> login(params);
+                case "quit" -> "quit";
                 default -> help();
             };
         } catch (ResponseException ex) {
@@ -45,10 +47,10 @@ public class PreloginClient {
             String email = params[2];
             RegisterRequest request = new RegisterRequest(userName, password, email);
             RegisterResult result = server.register(request);
-            LoginRequest logRequest = new LoginRequest(result.username(),password);
+            LoginRequest logRequest = new LoginRequest(userName,password);
             LoginResult logResult = server.login(logRequest);
             this.state = State.LOGEDIN;
-            return String.format("You signed in as %s.", userName);
+            return String.format("You logged in as %s.", userName);
         }
         System.out.println("Expected:<USERNAME> <PASSWORD> <EMAIL>, dummy.");
         return null;
@@ -64,17 +66,17 @@ public class PreloginClient {
                 this.state = State.LOGEDIN;
             }
             String result = "You are already logged in, dummy.";
-            System.out.println(ORANGE + result);
+            System.out.println(SET_TEXT_COLOR_ORANGE+ result);
             return null;
         }
         String result = "Expected <USERNAME> <PASSWORD>, dummy.";
-        System.out.println(ORANGE + result);
+        System.out.println(SET_TEXT_COLOR_ORANGE + result);
         return null;
     }
 
     public String help() {
         String result = "Available commands:\n" +
-                "register <USERNAME> <PASSWORD> <EMAIL> - to create commands\n" +
+                "register <USERNAME> <PASSWORD> <EMAIL> - to create an account\n" +
                 "login <USERNAME> <PASSWORD> - to play chess\n" +
                 "quit - playing chess\n"+
                 "help - with possible commands";

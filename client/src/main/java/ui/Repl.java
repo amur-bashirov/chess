@@ -19,8 +19,8 @@ public class Repl {
     }
 
     public void run() {
-        System.out.println(WHITE_KING + "Welcome to 240 chess. Type help to get started" + WHITE_KING);
-        System.out.print(preloginClient.help());
+        System.out.println(SET_TEXT_COLOR_ORANGE + SET_BG_COLOR_MAGENTA + WHITE_KING + "Welcome to 240 chess. Type help to get started" + WHITE_KING);
+        System.out.print(SET_TEXT_COLOR_ORANGE + SET_BG_COLOR_MAGENTA + preloginClient.help());
         Scanner scanner = new Scanner(System.in);
         var result = "";
         while(!result.equals("quit")){
@@ -28,14 +28,16 @@ public class Repl {
             String line = scanner.nextLine();
             try {
                 result = preloginClient.eval(line);
-                System.out.print(ORANGE + result);
+                System.out.print(SET_TEXT_COLOR_ORANGE + SET_BG_COLOR_MAGENTA+ result);
             } catch (Throwable e) {
                 var msg = e.toString();
                 System.out.print(msg);
             }
         }
-        result ="Have a nice day!;)";
-        System.out.println(SET_BG_COLOR_YELLOW + SET_TEXT_COLOR_GREEN  + result);
+        result ="Have a nice day!;)\n"+
+        "Have the best day!\n"+
+        "Have the very very best day!";
+        System.out.println(SET_BG_COLOR_RED+ SET_TEXT_COLOR_BLUE  + result);
         }
 
     private void printPrompt() {

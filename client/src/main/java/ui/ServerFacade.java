@@ -43,7 +43,7 @@ public class ServerFacade {
         } catch (ResponseException ex) {
             System.out.println("ResponseException");
         } catch (IOException ex){
-            System.out.println("IOException");
+            System.out.println("IOException: " + ex.getMessage());
         } catch (URISyntaxException e) {
             System.out.println("Incorrect Syntax, dummy.");
         } catch (BadRequestsException ex){
