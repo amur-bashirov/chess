@@ -2,7 +2,7 @@ package ui;
 
 
 
-import webSocketMessages.Notification;
+
 
 import java.util.Scanner;
 
@@ -41,7 +41,4 @@ public class Repl {
     private void printPrompt() {
         System.out.print("\n" + RESET + ">>> " + ORANGE);
     }
-}
-
-
 }

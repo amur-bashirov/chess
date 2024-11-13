@@ -2,11 +2,15 @@ package client;
 
 import org.junit.jupiter.api.*;
 import DataObjects.Server;
+import ui.PreloginClient;
+import ui.Repl;
 
 
 public class ServerFacadeTests {
 
     private static Server server;
+    private Repl repl;
+    static PreloginClient prelogClient;
 
     @BeforeAll
     public static void init() {
@@ -15,6 +19,8 @@ public class ServerFacadeTests {
         System.out.println("Started test HTTP server on " + port);
     }
 
+
+
     @AfterAll
     static void stopServer() {
         server.stop();
@@ -22,8 +28,8 @@ public class ServerFacadeTests {
 
 
     @Test
-    public void sampleTest() {
-        Assertions.assertTrue(true);
+    public void successRegisterTest() {
+
     }
 
 }

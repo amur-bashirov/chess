@@ -1,6 +1,10 @@
 package ui;
 
-import ui.websocket.NotificationHandler;
+import DataObjects.LoginRequest;
+import DataObjects.LoginResult;
+import DataObjects.RegisterRequest;
+import DataObjects.RegisterResult;
+
 
 import java.util.Arrays;
 
@@ -8,7 +12,7 @@ public class PreloginClient {
 
     private final ServerFacade server;
     private final String serverUrl;
-    private final State state = State.SIGNEDOUT;
+    private State state = State.SIGNEDOUT;
 
 
     public PreloginClient(String serverUrl){
@@ -32,6 +36,32 @@ public class PreloginClient {
     }
 
     public String register(String...params) throws ResponseException {
+        if (params.length < 3) {
+            String userName = params[0];
+            String password = params[1];
+            String email = params[2];
+            RegisterRequest request = new RegisterRequest(userName, password, email);
+            RegisterResult result = server.register(request);
+            LoginRequest logRequest = new LoginRequest(result.username(),password);
+            LoginResult logResult = server.login(logRequest);
+            this.state = State.SIGNEDIN;
+            return String.format("You signed in as %s.", userName);
+        }
+        throw new ResponseException(400,"Expected:<USERNAME> <PASSWORD> <EMAIL>");
 
+    }
+
+    public String help() {
+        if (state == State.SIGNEDOUT) {
+            return """
+                    - logIn <USERNAME> <PASSWORD>
+                    - quit
+                    -register <USERNAME> <PASSWORD> <EMAIL>
+                    """;
+        }
+        return """
+                -I AM NOT SURE WHAT IT DOES
+                
+                """;
     }
 }

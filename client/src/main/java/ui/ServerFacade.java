@@ -1,5 +1,7 @@
 package ui;
 
+import DataObjects.LoginRequest;
+import DataObjects.LoginResult;
 import com.google.gson.Gson;
 
 import DataObjects.RegisterRequest;
@@ -22,6 +24,13 @@ public class ServerFacade {
         var path = "/user";
         return makeRequest("POST", path, request, RegisterResult.class);
     }
+
+    public LoginResult login(LoginRequest request) throws ResponseException{
+        var path = "/session";
+        return makeRequest("POST",path,request,LoginResult.class);
+    }
+
+
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {
         try {
             URL url = (new URI(serverUrl + path)).toURL();
@@ -33,8 +42,10 @@ public class ServerFacade {
             http.connect();
             throwIfNotSuccessful(http);
             return readBody(http, responseClass);
-        } catch (Exception ex) {
+        } catch (ResponseException ex) {
             throw new ResponseException(500, ex.getMessage());
+        } catch (IOException ex){
+            System.out.println("IOException");
         }
     }
 
