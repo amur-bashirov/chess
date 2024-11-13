@@ -4,11 +4,9 @@ import dataaccess.AuthDataAccess;
 
 import dataaccess.DataAccessException;
 import dataaccess.GameDataAccess;
-import dataaccess.UserDataAccess;
 import model.AuthData;
 import model.GameData;
-import model.UserData;
-import server.*;
+import DataObjects.*;
 
 import java.util.ArrayList;
 

@@ -1,4 +1,4 @@
-package server;
+package DataObjects;
 
 public record RegisterRequest(
         String username,

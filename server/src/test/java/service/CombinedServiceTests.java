@@ -2,7 +2,7 @@ package service;
 
 import dataaccess.*;
 import org.junit.jupiter.api.*;
-import server.*;
+import DataObjects.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class CombinedServiceTests {

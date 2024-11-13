@@ -1,7 +1,5 @@
-import chess.*;
 import dataaccess.DataAccessException;
-import spark.Spark;
-import server.Server;
+import DataObjects.Server;
 
 public class Main {
     public static void main(String[] args) throws DataAccessException {

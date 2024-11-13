@@ -1,4 +1,4 @@
-package server;
+package DataObjects;
 
 public class BadRequestsException extends Exception {
     public BadRequestsException(String message) {
