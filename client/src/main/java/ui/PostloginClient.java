@@ -68,35 +68,32 @@ public class PostloginClient {
     }
 
     public String join(String...params) throws ResponseException {
-        if (isInteger(params[0]) && params.length == 2 &&
-                (params[1].equalsIgnoreCase("WHITE") || params[1].equalsIgnoreCase("BLACK"))){
-            int id = Integer.parseInt(params[0]);
-            String color = params[1];
-            JoinGameRequest request = new JoinGameRequest(authToken,color,id);
-            server.joinGame(request);
-            if (color.equalsIgnoreCase("WHITE")){
-                var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
+        if (params.length == 2) {
+            if (isInteger(params[0]) && //WILL it throw an error if there is no params?
+                    (params[1].equalsIgnoreCase("WHITE") || params[1].equalsIgnoreCase("BLACK"))) {
+                int id = Integer.parseInt(params[0]);
+                String color = params[1];
+                JoinGameRequest request = new JoinGameRequest(authToken, color, id);
+                server.joinGame(request);
+                if (color.equalsIgnoreCase("WHITE")) {
 
-                out.print(ERASE_SCREEN);
-                DrawChessBoard.drawHeaders(out);
-                DrawChessBoard.drawTicTacToeBoard(out);
+                }
+
             }
-            var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
-
-            out.print(ERASE_SCREEN);
-            DrawChessBoard.drawHeaders(out);
-            DrawChessBoard.drawTicTacToeBoard(out);
-        }
-        throw new ResponseException(415,"\"Incorrect syntax for join, dummy.\"");
+            throw new ResponseException(415, "\"Incorrect syntax for join, dummy.\"");
+        } throw new ResponseException(415, "\"Incorrect syntax for join, dummy.\"");
 
 
     }
 
     public String create(String...params) throws ResponseException {
-        String gameName = params[0];
-        CreateGamesRequest request = new CreateGamesRequest(authToken,gameName);
-        CreateGameResult result = server.createGame(request);
-        return String.format("You created game: %s.", gameName);
+        if (params.length == 1) {
+            String gameName = params[0];
+            CreateGamesRequest request = new CreateGamesRequest(authToken, gameName);
+            CreateGameResult result = server.createGame(request);
+            return String.format("You created game: %s.", gameName);
+        }
+        throw new ResponseException(415,"\"Incorrect syntax for create, dummy.\"");
     }
 
 
