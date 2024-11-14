@@ -11,10 +11,11 @@ public class PostloginClient {
     private State state;
     private String authToken = "";
 
-    public PostloginClient(String serverUrl, State state){
+    public PostloginClient(String serverUrl, State state, String authToken){
         this.server = new ServerFacade(serverUrl);
         this.serverUrl = serverUrl;
         this.state = state;
+        this.authToken = authToken;
     }
 
     public String eval (String input){

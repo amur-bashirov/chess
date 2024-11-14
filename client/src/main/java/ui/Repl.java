@@ -21,7 +21,7 @@ public class Repl {
 
     public Repl(String serverUrl){
         preloginClient = new PreloginClient(serverUrl);
-        postloginClient = new PostloginClient(serverUrl,state);
+        postloginClient = new PostloginClient(serverUrl,state,authToken);
     }
 
     public void run() {
@@ -35,6 +35,7 @@ public class Repl {
             try {
                 if (state.equals(State.LOGEDOUT)) {
                     result = preloginClient.eval(line);
+                    authToken = preloginClient.getAuthToken();
                     state = preloginClient.getState();
                     System.out.print(SET_TEXT_COLOR_ORANGE + SET_BG_COLOR_MAGENTA + result);
                 }else {
