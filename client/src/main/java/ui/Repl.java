@@ -21,7 +21,7 @@ public class Repl {
 
     public Repl(String serverUrl){
         preloginClient = new PreloginClient(serverUrl);
-        postloginClient = new PostloginClient(serverUrl);
+        postloginClient = new PostloginClient(serverUrl,state);
     }
 
     public void run() {

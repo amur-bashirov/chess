@@ -50,9 +50,13 @@ public class PreloginClient {
             RegisterResult result = server.register(request);
             if (result != null) {
                 authToken = result.authToken();
+                this.state = State.LOGEDIN;
+                return String.format("You are registered in as %s.", userName);
+            } else{
+                this.state = State.LOGEDOUT;
+                return help();
             }
-            this.state = State.LOGEDIN;
-            return String.format("You are registered in as %s.", userName);
+
         }
         throw new ResponseException(415,"\"Expected:<USERNAME> <PASSWORD> <EMAIL>, dummy.\"");
     }
@@ -72,7 +76,7 @@ public class PreloginClient {
                 LoginRequest logRequest = new LoginRequest(userName, password);
                 LoginResult logResult = server.login(logRequest);
                 this.state = State.LOGEDIN;
-                if (!logResult.equals(null)) {
+                if (logResult != null) {
                     authToken = logResult.authToken();
                 }
                 return String.format("You logged in as %s.", userName);

@@ -8,12 +8,13 @@ public class PostloginClient {
 
     private final String serverUrl;
     private final ServerFacade server;
-    private State state = State.LOGEDIN;
+    private State state;
     private String authToken = "";
 
-    public PostloginClient(String serverUrl){
+    public PostloginClient(String serverUrl, State state){
         this.server = new ServerFacade(serverUrl);
         this.serverUrl = serverUrl;
+        this.state = state;
     }
 
     public String eval (String input){
