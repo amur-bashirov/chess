@@ -41,7 +41,7 @@ public class ServerFacade {
         var path = "/game";
         return makeRequest("GET",path,request,ListGamesResult.class);
     }
-    public void JoinGame(JoinGameRequest request) throws ResponseException{
+    public void joinGame(JoinGameRequest request) throws ResponseException{
         var path = "/game";
         makeRequest("PUT",path,request,null);
     }

@@ -75,12 +75,14 @@ public class PreloginClient {
                 String password = params[1];
                 LoginRequest logRequest = new LoginRequest(userName, password);
                 LoginResult logResult = server.login(logRequest);
-                this.state = State.LOGEDIN;
                 if (logResult != null) {
+                    this.state = State.LOGEDIN;
                     authToken = logResult.authToken();
+                    return String.format("You logged in as %s.", userName);
+                }else{
+                    this.state = State.LOGEDOUT;
+                    return help();
                 }
-                return String.format("You logged in as %s.", userName);
-
         }
         throw new ResponseException(415,"Expected <USERNAME> <PASSWORD>, dummy.");
     }

@@ -2,7 +2,11 @@ package ui;
 
 import DataObjects.*;
 
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+
+import static ui.EscapeSequences.ERASE_SCREEN;
 
 public class PostloginClient {
 
@@ -11,6 +15,7 @@ public class PostloginClient {
     private State state;
     private String authToken = "";
 
+
     public PostloginClient(String serverUrl, State state, String authToken){
         this.server = new ServerFacade(serverUrl);
         this.serverUrl = serverUrl;
@@ -18,8 +23,10 @@ public class PostloginClient {
         this.authToken = authToken;
     }
 
-    public String eval (String input){
+    public String eval (String input,State state, String authToken){
         try {
+            this.authToken = authToken;
+            this.state = state;
             var tokens = input.toLowerCase().split(" ");
             var cmd = (tokens.length > 0) ? tokens[0] : "help";
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
@@ -38,6 +45,17 @@ public class PostloginClient {
 
     }
 
+
+    private boolean isInteger(String str) {
+        try {
+            int value = Integer.parseInt(str);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+
     public String logout() throws ResponseException{
         LogoutRequest request = new LogoutRequest(authToken);
         server.logout(request);
@@ -49,8 +67,29 @@ public class PostloginClient {
         return null;
     }
 
-    public String join(String...params){
-        return null;
+    public String join(String...params) throws ResponseException {
+        if (isInteger(params[0]) && params.length == 2 &&
+                (params[1].equalsIgnoreCase("WHITE") || params[1].equalsIgnoreCase("BLACK"))){
+            int id = Integer.parseInt(params[0]);
+            String color = params[1];
+            JoinGameRequest request = new JoinGameRequest(authToken,color,id);
+            server.joinGame(request);
+            if (color.equalsIgnoreCase("WHITE")){
+                var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
+
+                out.print(ERASE_SCREEN);
+                DrawChessBoard.drawHeaders(out);
+                DrawChessBoard.drawTicTacToeBoard(out);
+            }
+            var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
+
+            out.print(ERASE_SCREEN);
+            DrawChessBoard.drawHeaders(out);
+            DrawChessBoard.drawTicTacToeBoard(out);
+        }
+        throw new ResponseException(415,"\"Incorrect syntax for join, dummy.\"");
+
+
     }
 
     public String create(String...params) throws ResponseException {
@@ -64,7 +103,12 @@ public class PostloginClient {
     public String list() throws ResponseException{
         ListGamesRequest request = new ListGamesRequest(authToken);
         ListGamesResult result = server.listGames(request);
-        String result2 = "These are the available games: ";
+        String result2 = "";
+        if (result == null){
+            result2 = "There are no games";
+        }else {
+            result2 = "These are available games: ";
+        }
         return (result2 + result.toString());
     }
 

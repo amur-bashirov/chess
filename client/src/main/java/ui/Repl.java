@@ -24,6 +24,10 @@ public class Repl {
         postloginClient = new PostloginClient(serverUrl,state,authToken);
     }
 
+    public State getState(){
+        return this.state;
+    }
+
     public void run() {
         System.out.println(SET_TEXT_COLOR_ORANGE + SET_BG_COLOR_MAGENTA + WHITE_KING + "Welcome to 240 chess. Type help to get started" + WHITE_KING);
         System.out.print(SET_TEXT_COLOR_ORANGE + SET_BG_COLOR_MAGENTA + preloginClient.help());
@@ -39,7 +43,7 @@ public class Repl {
                     state = preloginClient.getState();
                     System.out.print(SET_TEXT_COLOR_ORANGE + SET_BG_COLOR_MAGENTA + result);
                 }else {
-                    result = postloginClient.eval(line);
+                    result = postloginClient.eval(line,state,authToken);
                     state = postloginClient.getState();
                     System.out.print(SET_TEXT_COLOR_ORANGE + SET_BG_COLOR_MAGENTA + result);
                 }
