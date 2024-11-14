@@ -28,6 +28,24 @@ public class ServerFacade {
         return makeRequest("POST",path,request,LoginResult.class);
     }
 
+    public void logout(LogoutRequest request) throws ResponseException{
+        var path = "/session";
+        makeRequest("DELETE",path,request,null);
+    }
+    public Object CreateGameResult (CreateGamesRequest request) throws ResponseException{
+        var path = "/game";
+        return makeRequest("POST",path,request,CreateGameResult.class);
+    }
+
+    public void listGames(ListGamesRequest request) throws ResponseException{
+        var path = "/game";
+        makeRequest("GET",path,request,null);
+    }
+    public void JoinGame(JoinGameRequest request) throws ResponseException{
+        var path = "/game";
+        makeRequest("PUT",path,request,null);
+    }
+
 
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {
         try {
@@ -83,6 +101,8 @@ public class ServerFacade {
             throw new ResponseException(status, "failure: " + status);
         }
     }
+
+
 
     private static <T> T readBody(HttpURLConnection http, Class<T> responseClass) throws IOException {
         T response = null;

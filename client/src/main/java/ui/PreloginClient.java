@@ -47,8 +47,6 @@ public class PreloginClient {
             String email = params[2];
             RegisterRequest request = new RegisterRequest(userName, password, email);
             RegisterResult result = server.register(request);
-            LoginRequest logRequest = new LoginRequest(userName,password);
-            LoginResult logResult = server.login(logRequest);
             this.state = State.LOGEDIN;
             return String.format("You logged in as %s.", userName);
         }
