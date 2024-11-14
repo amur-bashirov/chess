@@ -12,10 +12,15 @@ import static java.awt.Color.*;
 import static ui.EscapeSequences.*;
 
 public class Repl {
+
     private final PreloginClient preloginClient;
+    private final PostloginClient postloginClient;
+    private State state = State.LOGEDOUT;
+
 
     public Repl(String serverUrl){
         preloginClient = new PreloginClient(serverUrl);
+        postloginClient = new PostloginClient(serverUrl);
     }
 
     public void run() {
@@ -27,8 +32,13 @@ public class Repl {
             printPrompt();
             String line = scanner.nextLine();
             try {
-                result = preloginClient.eval(line);
-                System.out.print(SET_TEXT_COLOR_ORANGE + SET_BG_COLOR_MAGENTA+ result);
+                if (state.equals(State.LOGEDOUT)) {
+                    result = preloginClient.eval(line);
+                    System.out.print(SET_TEXT_COLOR_ORANGE + SET_BG_COLOR_MAGENTA + result);
+                }else {
+                    result = postloginClient.eval(line);
+                    System.out.print(SET_TEXT_COLOR_ORANGE + SET_BG_COLOR_MAGENTA + result);
+                }
             } catch (Throwable e) {
                 var msg = e.toString();
                 System.out.print(msg);
