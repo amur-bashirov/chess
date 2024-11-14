@@ -56,16 +56,16 @@ public class PreloginClient {
 
     public String login(String...params)throws ResponseException{
         if (params.length == 2){
-            if (state.equals(State.LOGEDIN)) {
+            if (state.equals(State.LOGEDOUT)) {
                 String userName = params[0];
                 String password = params[1];
                 LoginRequest logRequest = new LoginRequest(userName, password);
                 LoginResult logResult = server.login(logRequest);
                 this.state = State.LOGEDIN;
+                return String.format("You logged in as %s.", userName);
             }
             String result = "You are already logged in, dummy.";
-            System.out.println(SET_TEXT_COLOR_ORANGE+ result);
-            return null;
+            return result;
         }
         String result = "Expected <USERNAME> <PASSWORD>, dummy.";
         System.out.println(SET_TEXT_COLOR_ORANGE + result);
