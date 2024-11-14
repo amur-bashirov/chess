@@ -32,14 +32,14 @@ public class ServerFacade {
         var path = "/session";
         makeRequest("DELETE",path,request,null);
     }
-    public Object CreateGameResult (CreateGamesRequest request) throws ResponseException{
+    public CreateGameResult createGame(CreateGamesRequest request) throws ResponseException{
         var path = "/game";
         return makeRequest("POST",path,request,CreateGameResult.class);
     }
 
-    public void listGames(ListGamesRequest request) throws ResponseException{
+    public ListGamesResult listGames(ListGamesRequest request) throws ResponseException{
         var path = "/game";
-        makeRequest("GET",path,request,null);
+        return makeRequest("GET",path,request,ListGamesResult.class);
     }
     public void JoinGame(JoinGameRequest request) throws ResponseException{
         var path = "/game";

@@ -16,6 +16,7 @@ public class PreloginClient {
     private final ServerFacade server;
     private final String serverUrl;
     private State state = State.LOGEDOUT;
+    private String authToken = "";
 
 
     public PreloginClient(String serverUrl){
@@ -47,29 +48,37 @@ public class PreloginClient {
             String email = params[2];
             RegisterRequest request = new RegisterRequest(userName, password, email);
             RegisterResult result = server.register(request);
+            if (result != null) {
+                authToken = result.authToken();
+            }
             this.state = State.LOGEDIN;
-            return String.format("You logged in as %s.", userName);
+            return String.format("You are registered in as %s.", userName);
         }
-        System.out.println("Expected:<USERNAME> <PASSWORD> <EMAIL>, dummy.");
-        return null;
+        throw new ResponseException(415,"\"Expected:<USERNAME> <PASSWORD> <EMAIL>, dummy.\"");
+    }
+
+    public State getState() {
+        return this.state;
+    }
+
+    public String getAuthToken(){
+        return this.authToken;
     }
 
     public String login(String...params)throws ResponseException{
         if (params.length == 2){
-            if (state.equals(State.LOGEDOUT)) {
                 String userName = params[0];
                 String password = params[1];
                 LoginRequest logRequest = new LoginRequest(userName, password);
                 LoginResult logResult = server.login(logRequest);
                 this.state = State.LOGEDIN;
+                if (!logResult.equals(null)) {
+                    authToken = logResult.authToken();
+                }
                 return String.format("You logged in as %s.", userName);
-            }
-            String result = "You are already logged in, dummy.";
-            return result;
+
         }
-        String result = "Expected <USERNAME> <PASSWORD>, dummy.";
-        System.out.println(SET_TEXT_COLOR_ORANGE + result);
-        return null;
+        throw new ResponseException(415,"Expected <USERNAME> <PASSWORD>, dummy.");
     }
 
     public String help() {

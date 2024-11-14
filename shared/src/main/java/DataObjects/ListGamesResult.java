@@ -1,4 +1,4 @@
-package service;
+package DataObjects;
 
 import model.GameData;
 

@@ -8,7 +8,7 @@ import java.util.Scanner;
 
 
 import static com.sun.org.apache.xalan.internal.xsltc.compiler.Constants.RESET;
-import static java.awt.Color.*;
+
 import static ui.EscapeSequences.*;
 
 public class Repl {
@@ -16,6 +16,7 @@ public class Repl {
     private final PreloginClient preloginClient;
     private final PostloginClient postloginClient;
     private State state = State.LOGEDOUT;
+    private String authToken = "";
 
 
     public Repl(String serverUrl){
@@ -34,9 +35,11 @@ public class Repl {
             try {
                 if (state.equals(State.LOGEDOUT)) {
                     result = preloginClient.eval(line);
+                    state = preloginClient.getState();
                     System.out.print(SET_TEXT_COLOR_ORANGE + SET_BG_COLOR_MAGENTA + result);
                 }else {
                     result = postloginClient.eval(line);
+                    state = postloginClient.getState();
                     System.out.print(SET_TEXT_COLOR_ORANGE + SET_BG_COLOR_MAGENTA + result);
                 }
             } catch (Throwable e) {
@@ -51,6 +54,6 @@ public class Repl {
         }
 
     private void printPrompt() {
-        System.out.print("\n" + RESET + ">>> " + ORANGE);
+        System.out.print("\n" + RESET + ">>> " + SET_TEXT_COLOR_ORANGE + SET_BG_COLOR_MAGENTA);
     }
 }
