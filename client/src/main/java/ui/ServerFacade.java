@@ -20,40 +20,40 @@ public class ServerFacade {
 
     public RegisterResult register(RegisterRequest request) throws ResponseException {
         var path = "/user";
-        return makeRequest("POST", path, request, RegisterResult.class);
+        return makeRequest("POST", path, request, RegisterResult.class, null);
     }
 
     public LoginResult login(LoginRequest request) throws ResponseException{
         var path = "/session";
-        return makeRequest("POST",path,request,LoginResult.class);
+        return makeRequest("POST",path,request,LoginResult.class, null);
     }
 
     public void logout(LogoutRequest request) throws ResponseException{
         var path = "/session";
-        makeRequest("DELETE",path,request,null);
+        makeRequest("DELETE",path,request,null, null);
     }
-    public CreateGameResult createGame(CreateGamesRequest request) throws ResponseException{
+    public CreateGameResult createGame(CreateGamesRequest request, String authToken) throws ResponseException{
         var path = "/game";
-        return makeRequest("POST",path,request,CreateGameResult.class);
+        return makeRequest("POST",path,request,CreateGameResult.class, authToken);
     }
 
     public ListGamesResult listGames(ListGamesRequest request) throws ResponseException{
         var path = "/game";
-        return makeRequest("GET",path,request,ListGamesResult.class);
+        return makeRequest("GET",path,request,ListGamesResult.class, null);
     }
     public void joinGame(JoinGameRequest request) throws ResponseException{
         var path = "/game";
-        makeRequest("PUT",path,request,null);
+        makeRequest("PUT",path,request,null, null);
     }
 
 
-    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {
+    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass, String authToken) throws ResponseException {
         try {
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
             http.setDoOutput(true);
-
+            writeHeader(authToken,http);
             writeBody(request, http);
             http.connect();
             throwIfNotSuccessful(http);
@@ -72,6 +72,12 @@ public class ServerFacade {
             System.out.println("It is not accessible, dummy.");
         }
         return null;
+    }
+
+    private static void writeHeader(String authToken, HttpURLConnection http) throws IOException{
+        if (authToken != null){
+            http.addRequestProperty("Authorization",authToken);
+        }
     }
 
 

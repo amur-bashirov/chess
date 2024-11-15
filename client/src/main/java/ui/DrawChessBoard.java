@@ -53,11 +53,12 @@ public class DrawChessBoard {
         } else if(color.equalsIgnoreCase("WHITE")) {
             letters = new String[]{"a","b","c","d","e","f","g","h"};
         }
-        out.print(EMPTY);
+        out.print("   ");
 
         for (String letter : letters) {
-            out.print(letter + EMPTY);
+            out.print(letter + "\u2003 ");
         }
+        out.print(" ");
         out.print(SET_BG_COLOR_BLACK);
     }
 
@@ -98,7 +99,7 @@ public class DrawChessBoard {
         for (int row = 0; row < board.length; row++) {
             out.print(SET_BG_COLOR_DARK_GREEN);
             out.print(SET_TEXT_COLOR_RED);
-            out.print(8 - row + " " + SPACE.repeat(2));
+            out.print(8 - row + " " );
             // Print row number from the perspective at the start of each row
             isDarkSquare = row % 2 == 0;
 

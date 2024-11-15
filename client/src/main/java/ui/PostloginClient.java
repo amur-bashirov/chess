@@ -90,7 +90,7 @@ public class PostloginClient {
         if (params.length == 1) {
             String gameName = params[0];
             CreateGamesRequest request = new CreateGamesRequest(authToken, gameName);
-            CreateGameResult result = server.createGame(request);
+            CreateGameResult result = server.createGame(request, authToken);
             return String.format("You created game: %s.", gameName);
         }
         throw new ResponseException(415,"\"Incorrect syntax for create, dummy.\"");
