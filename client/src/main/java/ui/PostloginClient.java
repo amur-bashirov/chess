@@ -64,21 +64,22 @@ public class PostloginClient {
     }
 
     public String observe(String...params){
-        return null;
+        if (params.length == 1){
+            if (isInteger(params[0])){
+                int id = Integer.parseInt(params[0]);
+            }
+        }
     }
 
     public String join(String...params) throws ResponseException {
         if (params.length == 2) {
-            if (isInteger(params[0]) && //WILL it throw an error if there is no params?
+            if (isInteger(params[0]) &&
                     (params[1].equalsIgnoreCase("WHITE") || params[1].equalsIgnoreCase("BLACK"))) {
                 int id = Integer.parseInt(params[0]);
                 String color = params[1];
                 JoinGameRequest request = new JoinGameRequest(authToken, color, id);
-                server.joinGame(request);
-                if (color.equalsIgnoreCase("WHITE")) {
-
-                }
-
+                server.joinGame(request, authToken);
+                DrawChessBoard.draw(color);
             }
             throw new ResponseException(415, "\"Incorrect syntax for join, dummy.\"");
         } throw new ResponseException(415, "\"Incorrect syntax for join, dummy.\"");
@@ -99,7 +100,7 @@ public class PostloginClient {
 
     public String list() throws ResponseException{
         ListGamesRequest request = new ListGamesRequest(authToken);
-        ListGamesResult result = server.listGames(request);
+        ListGamesResult result = server.listGames(request, authToken);
         String result2 = "";
         if (result == null){
             result2 = "There are no games";

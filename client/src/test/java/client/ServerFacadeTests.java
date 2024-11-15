@@ -136,13 +136,12 @@ public class ServerFacadeTests {
                 "Expected 'It is not accessible, dummy.' message not printed.");
     }
 
-    // Test createGame method
     @Test
     public void successCreateGameTest() throws ResponseException {
         RegisterRequest registerRequest = new RegisterRequest("tusername", "tpassword", "temail");
         RegisterResult registerResult = serverFacade.register(registerRequest);
         CreateGamesRequest createGameRequest = new CreateGamesRequest(registerResult.authToken(), "game description");
-        CreateGameResult result = serverFacade.createGame(createGameRequest);
+        CreateGameResult result = serverFacade.createGame(createGameRequest,registerResult.authToken());
 
 
         Assertions.assertNotNull(result, "Game creation failed.");
@@ -159,7 +158,7 @@ public class ServerFacadeTests {
         System.setOut(new PrintStream(outputStream));
 
         try {
-            serverFacade.createGame(invalidCreateGameRequest);
+            serverFacade.createGame(invalidCreateGameRequest,"random");
         } catch (ResponseException ignored) {
         }
         System.setOut(originalOut);
@@ -175,7 +174,7 @@ public class ServerFacadeTests {
         RegisterRequest registerRequest = new RegisterRequest("tusername", "tpassword", "temail");
         RegisterResult registerResult = serverFacade.register(registerRequest);
         ListGamesRequest listGamesRequest = new ListGamesRequest(registerResult.authToken());
-        ListGamesResult result = serverFacade.listGames(listGamesRequest);
+        ListGamesResult result = serverFacade.listGames(listGamesRequest,registerResult.authToken());
         Assertions.assertNotNull(result, "Failed to retrieve games list.");
         Assertions.assertFalse(result.games().isEmpty(), "Games list is empty.");
     }
@@ -185,13 +184,13 @@ public class ServerFacadeTests {
         RegisterRequest registerRequest = new RegisterRequest("tusername", "tpassword", "temail");
         RegisterResult registerResult = serverFacade.register(registerRequest);
 
-        ListGamesRequest invalidListGamesRequest = new ListGamesRequest(registerResult.authToken());
+        ListGamesRequest invalidListGamesRequest = new ListGamesRequest("random");
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PrintStream originalOut = System.out;
         System.setOut(new PrintStream(outputStream));
 
         try {
-            serverFacade.listGames(invalidListGamesRequest);
+            serverFacade.listGames(invalidListGamesRequest,"random");
         } catch (ResponseException ignored) {
         }
         System.setOut(originalOut);
@@ -207,14 +206,16 @@ public class ServerFacadeTests {
         RegisterRequest registerRequest = new RegisterRequest("tusername", "tpassword", "temail");
         RegisterResult registerResult = serverFacade.register(registerRequest);
         CreateGamesRequest createGameRequest = new CreateGamesRequest(registerResult.authToken(), "description");
-        CreateGameResult createGameResult = serverFacade.createGame(createGameRequest);
+        CreateGameResult createGameResult = serverFacade.createGame(createGameRequest, registerResult.authToken());
         JoinGameRequest joinGameRequest = new JoinGameRequest(registerResult.authToken(),"black",9);
-        serverFacade.joinGame(joinGameRequest);
+        serverFacade.joinGame(joinGameRequest,registerResult.authToken());
         Assertions.assertTrue(true);
     }
 
     @Test
     public void failureJoinGameTest() throws ResponseException {
+        RegisterRequest registerRequest = new RegisterRequest("tusername", "tpassword", "temail");
+        RegisterResult registerResult = serverFacade.register(registerRequest);
         JoinGameRequest invalidJoinGameRequest = new JoinGameRequest("invalid-game-id", "WHITE", 8);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -222,7 +223,7 @@ public class ServerFacadeTests {
         System.setOut(new PrintStream(outputStream));
 
         try {
-            serverFacade.joinGame(invalidJoinGameRequest);
+            serverFacade.joinGame(invalidJoinGameRequest,"invalid-game-id");
         } catch (ResponseException ignored) {
         }
         System.setOut(originalOut);

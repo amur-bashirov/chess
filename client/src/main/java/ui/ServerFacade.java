@@ -37,13 +37,13 @@ public class ServerFacade {
         return makeRequest("POST",path,request,CreateGameResult.class, authToken);
     }
 
-    public ListGamesResult listGames(ListGamesRequest request) throws ResponseException{
+    public ListGamesResult listGames(ListGamesRequest request, String authToken) throws ResponseException{
         var path = "/game";
-        return makeRequest("GET",path,request,ListGamesResult.class, null);
+        return makeRequest("GET",path,request,ListGamesResult.class, authToken);
     }
-    public void joinGame(JoinGameRequest request) throws ResponseException{
+    public void joinGame(JoinGameRequest request, String authToken) throws ResponseException{
         var path = "/game";
-        makeRequest("PUT",path,request,null, null);
+        makeRequest("PUT",path,request,null, authToken);
     }
 
 

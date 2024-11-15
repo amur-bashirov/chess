@@ -29,16 +29,14 @@ public class DrawChessBoard {
 
 
 
-    public static void main(String[] args) {
+    public static void draw(String color) {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
-
-        out.print(ERASE_SCREEN);  // Clear the screen
-        String color = "white";   // Color choice for the header text
+        out.print(ERASE_SCREEN);
         drawHeader(out, color);
         out.println();
         if (color.equalsIgnoreCase("BLACK")) {
             drawBoardFromBlack(out);
-        } else{
+        } else if(color.equalsIgnoreCase("WHITE")) {
             drawBoardFromWhite(out);
         }
         drawHeader(out, color);
@@ -54,7 +52,6 @@ public class DrawChessBoard {
             letters = new String[]{"a","b","c","d","e","f","g","h"};
         }
         out.print("   ");
-
         for (String letter : letters) {
             out.print(letter + "\u2003 ");
         }
@@ -63,7 +60,6 @@ public class DrawChessBoard {
     }
 
     static void drawBoardFromBlack(PrintStream out) {
-        // Order rows from Black's perspective
         String[][] board = {
                 BLACK_BACK_ROW,
                 BLACK_PAWN_ROW,
@@ -79,7 +75,6 @@ public class DrawChessBoard {
     }
 
     static void drawBoardFromWhite(PrintStream out) {
-        // Order rows from White's perspective
         String[][] board = {
                 WHITE_BACK_ROW,
                 WHITE_PAWN_ROW,
@@ -100,7 +95,6 @@ public class DrawChessBoard {
             out.print(SET_BG_COLOR_DARK_GREEN);
             out.print(SET_TEXT_COLOR_RED);
             out.print(8 - row + " " );
-            // Print row number from the perspective at the start of each row
             isDarkSquare = row % 2 == 0;
 
             for (int col = 0; col < board[row].length; col++) {
@@ -111,16 +105,13 @@ public class DrawChessBoard {
                 }
                 out.print(SET_TEXT_COLOR_BLUE);
                 out.print(board[row][col]);
-                isDarkSquare = !isDarkSquare;  // Alternate square color
+                isDarkSquare = !isDarkSquare;
             }
             out.print(SET_BG_COLOR_DARK_GREEN);
             out.print(SET_TEXT_COLOR_RED);
             out.print((8 - row + " "));
-            // Print row number from the perspective at the start of each row
             out.print(SET_BG_COLOR_BLACK);
             out.println();
         }
     }
-
-
 }
