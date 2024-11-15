@@ -35,12 +35,11 @@ public class GameService {
     public CreateGameResult createGame(CreateGamesRequest request) throws DataAccessException{
         AuthData authData = authMethods.getAuth(request.authToken());
         if (authData != null){
-            GameData game = gameMethods.getGame(request.gameName());
-            if (game == null){
+
                 GameData newGame = gameMethods.createGame(request.gameName());
                 CreateGameResult result = new CreateGameResult(newGame.gameID());
                 return result;
-            }
+
         }
         throw new DataAccessException("unauthorized");
     }

@@ -28,9 +28,9 @@ public class ServerFacade {
         return makeRequest("POST",path,request,LoginResult.class, null);
     }
 
-    public void logout(LogoutRequest request) throws ResponseException{
+    public void logout(LogoutRequest request, String authToken) throws ResponseException{
         var path = "/session";
-        makeRequest("DELETE",path,request,null, null);
+        makeRequest("DELETE",path,request,null, authToken);
     }
     public CreateGameResult createGame(CreateGamesRequest request, String authToken) throws ResponseException{
         var path = "/game";
@@ -39,7 +39,7 @@ public class ServerFacade {
 
     public ListGamesResult listGames(ListGamesRequest request, String authToken) throws ResponseException{
         var path = "/game";
-        return makeRequest("GET",path,request,ListGamesResult.class, authToken);
+        return makeRequest("GET",path,null,ListGamesResult.class, authToken);
     }
     public void joinGame(JoinGameRequest request, String authToken) throws ResponseException{
         var path = "/game";

@@ -58,17 +58,19 @@ public class PostloginClient {
 
     public String logout() throws ResponseException{
         LogoutRequest request = new LogoutRequest(authToken);
-        server.logout(request);
+        server.logout(request,authToken);
         this.state = State.LOGEDOUT;
         return String.format("You are logged out");
     }
 
-    public String observe(String...params){
+    public String observe(String...params)throws ResponseException{
         if (params.length == 1){
             if (isInteger(params[0])){
                 int id = Integer.parseInt(params[0]);
+
             }
         }
+        throw new ResponseException(415, "\"Incorrect syntax for observe, dummy.\"");
     }
 
     public String join(String...params) throws ResponseException {
@@ -104,10 +106,11 @@ public class PostloginClient {
         String result2 = "";
         if (result == null){
             result2 = "There are no games";
+            return (result2);
         }else {
             result2 = "These are available games: ";
+            return (result2 + result.toString());
         }
-        return (result2 + result.toString());
     }
 
     public State getState() {

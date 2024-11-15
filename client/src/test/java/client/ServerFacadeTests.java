@@ -79,7 +79,7 @@ public class ServerFacadeTests {
                 new RegisterRequest("tusername","tpassword","temail");
         RegisterResult result = serverFacade.register(request);
         LogoutRequest request2 = new LogoutRequest(result.authToken());
-        serverFacade.logout(request2);
+        serverFacade.logout(request2,result.authToken());
         LoginRequest request3 = new LoginRequest(request.username(),request.password());
         LoginResult result2 = serverFacade.login(request3);
         Assertions.assertNotNull(result2,"login method return empty file");
@@ -91,7 +91,7 @@ public class ServerFacadeTests {
                 new RegisterRequest("tusername","tpassword","temail");
         RegisterResult result = serverFacade.register(request);
         LogoutRequest logoutRequest = new LogoutRequest(result.authToken());
-        serverFacade.logout(logoutRequest);
+        serverFacade.logout(logoutRequest,result.authToken());
         LoginRequest invalidLoginRequest = new LoginRequest("tusername", "wrongpassword");
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PrintStream originalOut = System.out;
@@ -113,7 +113,7 @@ public class ServerFacadeTests {
         RegisterRequest registerRequest = new RegisterRequest("user", "password", "user@example.com");
         RegisterResult registerResult = serverFacade.register(registerRequest);
         LogoutRequest logoutRequest = new LogoutRequest(registerResult.authToken());
-        serverFacade.logout(logoutRequest);
+        serverFacade.logout(logoutRequest,registerResult.authToken());
         Assertions.assertTrue(true);
     }
 
@@ -125,7 +125,7 @@ public class ServerFacadeTests {
         System.setOut(new PrintStream(outputStream));
 
         try {
-            serverFacade.logout(invalidLogoutRequest);
+            serverFacade.logout(invalidLogoutRequest,"invalid-token");
         } catch (ResponseException ignored) {
         }
 
