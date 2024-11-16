@@ -17,7 +17,7 @@ public class ServerFacadeTests {
     private static ServerFacade serverFacade;
     private static Server server;
 
-    private static final String serverUrl = "http://localhost:8080";
+    private static String serverUrl;
 
     private String existingAuth;
 
@@ -32,6 +32,7 @@ public class ServerFacadeTests {
         server = new Server();
         var port = server.run(0);
         System.out.println("Started test HTTP server on " + port);
+        serverUrl = serverUrl + port;
 
         serverFacade = new ServerFacade(serverUrl);
     }
