@@ -1,6 +1,5 @@
 package dataaccess;
 
-import DataObjects.DataAccessException;
 import model.AuthData;
 import model.UserData;
 
@@ -13,7 +12,7 @@ public class MySqlAuthDAO implements AuthDataAccess{
 
 
     @Override
-    public AuthData createAuth(UserData data) throws DataAccessException {
+    public AuthData createAuth(UserData data) throws dataaccess.DataAccessException {
         if (data == null){
             return null;
         }
@@ -30,7 +29,7 @@ public class MySqlAuthDAO implements AuthDataAccess{
                 ps.executeUpdate();
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Database error while creating AuthData for username: " + username);
+            throw new dataaccess.DataAccessException("Database error while creating AuthData for username: " + username);
         }
 
 
@@ -40,7 +39,7 @@ public class MySqlAuthDAO implements AuthDataAccess{
 
 
     @Override
-    public AuthData getAuth(String token) throws DataAccessException {
+    public AuthData getAuth(String token) throws dataaccess.DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
             var statement = "SELECT authToken, username FROM auth WHERE authToken=?";
             try (var ps = conn.prepareStatement(statement)) {
@@ -55,19 +54,19 @@ public class MySqlAuthDAO implements AuthDataAccess{
                 }
             }
         } catch (Exception e) {
-            throw new DataAccessException(String.format("Unable to read data: %s", e.getMessage()));
+            throw new dataaccess.DataAccessException(String.format("Unable to read data: %s", e.getMessage()));
         }
         return null;
     }
 
     @Override
-    public void deleteAuth(AuthData data) throws DataAccessException {
+    public void deleteAuth(AuthData data) throws dataaccess.DataAccessException {
         var statement = "DELETE FROM auth WHERE authToken = ?";
         executeUpdate(statement, data.authToken());
     }
 
     @Override
-    public void clear() throws DataAccessException {
+    public void clear() throws dataaccess.DataAccessException {
         var statement = "TRUNCATE auth";
         executeUpdate(statement);
 

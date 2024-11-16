@@ -1,5 +1,4 @@
 package dataaccess;
-import DataObjects.DataAccessException;
 import chess.ChessGame;
 import model.AuthData;
 import model.GameData;
@@ -17,11 +16,11 @@ public class DataBaseManagerTests {
     private final GameDataAccess gameAccess = new MySqlGameDAO();
     private final ClearAccess clearAccess = new MySqlClear();
 
-    public DataBaseManagerTests() throws DataAccessException {
+    public DataBaseManagerTests() throws dataaccess.DataAccessException {
     }
 
     @BeforeAll
-    public static void createDataBase() throws DataAccessException {
+    public static void createDataBase() throws dataaccess.DataAccessException {
         db = new DatabaseManager();
         db.openConnection();
         db.configureDatabase();
@@ -29,19 +28,19 @@ public class DataBaseManagerTests {
     }
 
     @BeforeEach
-    public void settingUp() throws DataAccessException {
+    public void settingUp() throws dataaccess.DataAccessException {
         db.openConnection();
         userAccess.clear();
         authAccess.clear();
         gameAccess.clear();
     }
     @AfterEach
-    public void tearDown() throws DataAccessException{
+    public void tearDown() throws dataaccess.DataAccessException {
         db.closeConnection(false);
     }
 
     @Test
-    public void successCreateUserTest() throws DataAccessException {
+    public void successCreateUserTest() throws dataaccess.DataAccessException {
         UserData data = new UserData("username", "password", "email");
         userAccess.creatUser(data);
         UserData data2 = userAccess.getUser(data.username());
@@ -49,16 +48,16 @@ public class DataBaseManagerTests {
     }
 
     @Test
-    public void failCreateUserTest() throws DataAccessException {
+    public void failCreateUserTest() throws dataaccess.DataAccessException {
         UserData data = new UserData("test", "test", "test");
         userAccess.creatUser(data);
         UserData data2 =new UserData("test", "test", "test");
-        Assertions.assertThrows(DataAccessException.class, () -> userAccess.creatUser(data2));
+        Assertions.assertThrows(dataaccess.DataAccessException.class, () -> userAccess.creatUser(data2));
         userAccess.clear();
     }
 
     @Test
-    public void clearTest() throws DataAccessException {
+    public void clearTest() throws dataaccess.DataAccessException {
         UserData newData = new UserData("username", "password", "email");
         userAccess.creatUser(newData);
         userAccess.clear();
@@ -86,7 +85,7 @@ public class DataBaseManagerTests {
     }
 
     @Test
-    public void successGetAuthTest() throws DataAccessException {
+    public void successGetAuthTest() throws dataaccess.DataAccessException {
         UserData data = new UserData("username", "password", "email");
         userAccess.creatUser(data);
         AuthData auth = authAccess.createAuth(data);
@@ -95,7 +94,7 @@ public class DataBaseManagerTests {
     }
 
     @Test
-    public void failGetAuthTest() throws DataAccessException {
+    public void failGetAuthTest() throws dataaccess.DataAccessException {
         UserData data = new UserData("test", "test", "test");
         userAccess.creatUser(data);
         AuthData auth = authAccess.createAuth(data);
@@ -105,7 +104,7 @@ public class DataBaseManagerTests {
     }
 
     @Test
-    public void failCreateAuthTest() throws DataAccessException {
+    public void failCreateAuthTest() throws dataaccess.DataAccessException {
         AuthData auth = authAccess.createAuth(null);
         Assertions.assertNull(auth);
         userAccess.clear();
@@ -113,7 +112,7 @@ public class DataBaseManagerTests {
     }
 
     @Test
-    public void successCreateAuthTest() throws DataAccessException {
+    public void successCreateAuthTest() throws dataaccess.DataAccessException {
         UserData data = new UserData("test", "test", "test");
         userAccess.creatUser(data);
         AuthData auth = authAccess.createAuth(data);
@@ -124,7 +123,7 @@ public class DataBaseManagerTests {
     }
 
     @Test
-    public void successDeleteAuthTest() throws DataAccessException {
+    public void successDeleteAuthTest() throws dataaccess.DataAccessException {
         UserData data = new UserData("test", "test", "test");
         userAccess.creatUser(data);
         AuthData auth = authAccess.createAuth(data);
@@ -138,7 +137,7 @@ public class DataBaseManagerTests {
 
 
     @Test
-    public void successClearTest() throws DataAccessException {
+    public void successClearTest() throws dataaccess.DataAccessException {
         UserData data = new UserData("test", "test", "test");
         userAccess.creatUser(data);
         userAccess.clear();
@@ -147,7 +146,7 @@ public class DataBaseManagerTests {
     }
 
     @Test
-    public void successCreateGameTest() throws DataAccessException {
+    public void successCreateGameTest() throws dataaccess.DataAccessException {
         String gameName = "test";
 
 
@@ -177,7 +176,7 @@ public class DataBaseManagerTests {
     }
 
     @Test
-    public void successGetGameTest() throws DataAccessException {
+    public void successGetGameTest() throws dataaccess.DataAccessException {
         ChessGame game = new ChessGame();
         String gameName = "test";
         GameData createdGame = gameAccess.createGame(gameName);
@@ -187,7 +186,7 @@ public class DataBaseManagerTests {
     }
 
     @Test
-    public void failGetGameTest() throws DataAccessException {
+    public void failGetGameTest() throws dataaccess.DataAccessException {
         String gameName = "test";
         gameAccess.createGame(gameName);
         gameAccess.clear();
@@ -197,7 +196,7 @@ public class DataBaseManagerTests {
     }
 
     @Test
-    public void successGameClearTest() throws DataAccessException {
+    public void successGameClearTest() throws dataaccess.DataAccessException {
         String gameName = "test";
         gameAccess.createGame(gameName);
         gameAccess.clear();
@@ -206,7 +205,7 @@ public class DataBaseManagerTests {
     }
 
     @Test
-    public void successUpdateGameTest() throws DataAccessException, OccupiedException {
+    public void successUpdateGameTest() throws dataaccess.DataAccessException, OccupiedException {
         ChessGame game = new ChessGame();
         String gameName = "test";
         String userName = "user";
@@ -224,7 +223,7 @@ public class DataBaseManagerTests {
     }
 
     @Test
-    public void failUpdateGameTest() throws DataAccessException, OccupiedException {
+    public void failUpdateGameTest() throws dataaccess.DataAccessException, OccupiedException {
         String gameName = "test";
         GameData createdGame = gameAccess.createGame(gameName); // Create the game
         gameAccess.updateGame("WHITE", createdGame.gameID(), "test1"); // Update the game
@@ -253,7 +252,7 @@ public class DataBaseManagerTests {
     }
 
     @Test
-    public void failListGamesTest() throws DataAccessException {
+    public void failListGamesTest() throws dataaccess.DataAccessException {
         ChessGame game = new ChessGame();
         GameData data = new GameData(1,
                 "test",null,"test",game);
@@ -266,7 +265,7 @@ public class DataBaseManagerTests {
     }
 
     @Test
-    public void successGetGame2Test() throws DataAccessException {
+    public void successGetGame2Test() throws dataaccess.DataAccessException {
         ChessGame game = new ChessGame();
         String gameName = "test";
         GameData createdGameData = gameAccess.createGame(gameName);
@@ -277,7 +276,7 @@ public class DataBaseManagerTests {
 
 
     @Test
-    public void failGetGame2Test() throws DataAccessException {
+    public void failGetGame2Test() throws dataaccess.DataAccessException {
         ChessGame game = new ChessGame();
         GameData data = new GameData(1, "test",null,"test",game);
         String gameName = "test";

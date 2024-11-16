@@ -1,8 +1,6 @@
 package dataaccess;
 
-import DataObjects.DataAccessException;
-
 public interface ClearAccess {
 
-    void clear() throws DataAccessException;
+    void clear() throws dataaccess.DataAccessException;
 }

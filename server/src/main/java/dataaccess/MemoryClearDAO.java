@@ -1,7 +1,5 @@
 package dataaccess;
 
-import DataObjects.DataAccessException;
-
 public class MemoryClearDAO implements ClearAccess {
 
     private final AuthDataAccess authAccess;

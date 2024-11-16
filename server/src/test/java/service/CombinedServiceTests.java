@@ -62,7 +62,7 @@ public class CombinedServiceTests {
             Assertions.assertEquals(existingUser.username(), result.username());
             Assertions.assertNotNull(result.authToken());
         } catch (DataAccessException e) {
-            Assertions.fail("Login should succeed, but threw DataAccessException: " + e.getMessage());
+            Assertions.fail("Login should succeed, but threw dataaccess.DataAccessException: " + e.getMessage());
         }
     }
 
@@ -89,7 +89,7 @@ public class CombinedServiceTests {
             Assertions.assertNotNull(result);
             Assertions.assertTrue(result.gameID() > 0);
         } catch (DataAccessException e) {
-            Assertions.fail("Game creation should succeed, but threw DataAccessException: " + e.getMessage());
+            Assertions.fail("Game creation should succeed, but threw dataaccess.DataAccessException: " + e.getMessage());
         }
     }
 
@@ -111,7 +111,7 @@ public class CombinedServiceTests {
             Assertions.assertNotNull(result);
             Assertions.assertTrue(result.games().isEmpty());
         } catch (DataAccessException e) {
-            Assertions.fail("List games should succeed, but threw DataAccessException: " + e.getMessage());
+            Assertions.fail("List games should succeed, but threw dataaccess.DataAccessException: " + e.getMessage());
         }
     }
 
@@ -154,11 +154,11 @@ public class CombinedServiceTests {
         try {
             userService.logout(logoutRequest);
         } catch (DataAccessException e) {
-            Assertions.fail("Logout should succeed, but threw DataAccessException: " + e.getMessage());
+            Assertions.fail("Logout should succeed, but threw dataaccess.DataAccessException: " + e.getMessage());
         }
         Assertions.assertThrows(DataAccessException.class, () -> {
             userService.logout(logoutRequest);
-        }, "Logging out again with the same auth token should throw DataAccessException");
+        }, "Logging out again with the same auth token should throw dataaccess.DataAccessException");
     }
     @Test
     @Order(12)
@@ -178,7 +178,7 @@ public class CombinedServiceTests {
             CreateGameResult createResult = gameService.createGame(createRequest);
             Assertions.assertNotNull(createResult, "Game creation should return a result");
         } catch (DataAccessException e) {
-            Assertions.fail("Game creation should succeed, but threw DataAccessException: " + e.getMessage());
+            Assertions.fail("Game creation should succeed, but threw dataaccess.DataAccessException: " + e.getMessage());
         }
 
         ListGamesRequest listRequest = new ListGamesRequest(existingAuth);
@@ -187,7 +187,7 @@ public class CombinedServiceTests {
             Assertions.assertNotNull(result, "ListGamesResult should not be null");
             Assertions.assertFalse(result.games().isEmpty(), "Game list should not be empty");
         } catch (DataAccessException e) {
-            Assertions.fail("Listing games should succeed, but threw DataAccessException: " + e.getMessage());
+            Assertions.fail("Listing games should succeed, but threw dataaccess.DataAccessException: " + e.getMessage());
         }
     }
 

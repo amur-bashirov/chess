@@ -2,7 +2,7 @@ package service;
 
 import dataaccess.AuthDataAccess;
 
-import DataObjects.DataAccessException;
+import dataaccess.DataAccessException;
 import dataaccess.UserDataAccess;
 import model.AuthData;
 import model.UserData;
@@ -53,6 +53,6 @@ public class UserService {
             authMethods.deleteAuth(data);
             return;
         }
-        throw new DataAccessException("unauthorized");
+        throw new dataaccess.DataAccessException("unauthorized");
     }
 }

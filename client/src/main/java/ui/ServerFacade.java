@@ -75,10 +75,11 @@ public class ServerFacade {
         } catch (BadRequestsException ex){
             System.out.println("Bad Request, dummy.");
             this.exception = true;
-        } catch (OccupiedException ex){
+        } catch (OccupiedException ex) {
             System.out.println("It is already taken, dummy.");
             this.exception = true;
-        } catch(DataAccessException ex){
+
+        } catch(Unauthorized ex){
             System.out.println("It is not accessible, dummy.");
             this.exception = true;
         }
@@ -103,7 +104,7 @@ public class ServerFacade {
     }
 
     private void throwIfNotSuccessful(HttpURLConnection http) throws IOException,
-            ResponseException, BadRequestsException, OccupiedException, DataAccessException {
+            ResponseException, BadRequestsException, OccupiedException, Unauthorized{
         var status = http.getResponseCode();
         if (!isSuccessful(status)) {
             if (status == 400) {
@@ -113,7 +114,7 @@ public class ServerFacade {
                 throw new OccupiedException("Already occupied" + status);
             }
             if (status == 401){
-                throw new DataAccessException("It is not Accessible"+status);
+                throw new Unauthorized("It is not Accessible"+status);
             }
             throw new ResponseException(status, "failure: " + status);
         }

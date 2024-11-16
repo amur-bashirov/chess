@@ -1,5 +1,4 @@
 package dataaccess;
-import DataObjects.DataAccessException;
 
 import java.sql.*;
 import java.util.Properties;
@@ -52,7 +51,7 @@ public class DatabaseManager {
                 preparedStatement.executeUpdate();
             }
         } catch (SQLException e) {
-            throw new DataAccessException(e.getMessage());
+            throw new dataaccess.DataAccessException(e.getMessage());
         }
     }
 
@@ -77,7 +76,7 @@ public class DatabaseManager {
             conn.setCatalog(DATABASE_NAME);
             return conn;
         } catch (SQLException e) {
-            throw new DataAccessException(e.getMessage());
+            throw new dataaccess.DataAccessException(e.getMessage());
         }
     }
 
@@ -87,7 +86,7 @@ public class DatabaseManager {
              conn.setAutoCommit(false);
 
         } catch (SQLException e) {
-            throw new DataAccessException("openConnection failed" + e.getMessage());
+            throw new dataaccess.DataAccessException("openConnection failed" + e.getMessage());
         }
 
     }

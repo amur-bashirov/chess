@@ -2,7 +2,7 @@ package service;
 
 import dataaccess.AuthDataAccess;
 
-import DataObjects.DataAccessException;
+import dataaccess.DataAccessException;
 import dataaccess.GameDataAccess;
 import model.AuthData;
 import model.GameData;
@@ -22,14 +22,14 @@ public class GameService {
     }
 
 
-    public ListGamesResult listGames(ListGamesRequest request) throws DataAccessException{
+    public ListGamesResult listGames(ListGamesRequest request) throws dataaccess.DataAccessException {
         AuthData authData = authMethods.getAuth(request.authToken());
         if (authData != null){
             ArrayList<GameData> gameList = gameMethods.listGames();
             ListGamesResult games = new ListGamesResult(gameList);
             return games;
         }
-        throw new DataAccessException("unauthorized");
+        throw new dataaccess.DataAccessException("unauthorized");
     }
 
     public CreateGameResult createGame(CreateGamesRequest request) throws DataAccessException{
@@ -45,7 +45,7 @@ public class GameService {
     }
 
 
-    public void joinGame(JoinGameRequest request) throws DataAccessException, OccupiedException, BadRequestsException {
+    public void joinGame(JoinGameRequest request) throws dataaccess.DataAccessException, OccupiedException, BadRequestsException {
         AuthData authData = authMethods.getAuth(request.authToken());
         if (authData != null){
             GameData game = gameMethods.getGame2(request.gameID());
@@ -55,6 +55,6 @@ public class GameService {
             }
             throw new BadRequestsException("bad request");
         }
-        throw new DataAccessException("unauthorized");
+        throw new dataaccess.DataAccessException("unauthorized");
     }
 }

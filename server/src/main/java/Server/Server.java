@@ -1,5 +1,6 @@
 package Server;
 
+import DataObjects.*;
 import com.google.gson.Gson;
 import dataaccess.*;
 import service.*;
@@ -113,7 +114,7 @@ public class Server {
         if (authToken == null || authToken.isEmpty()) {
             throw new DataAccessException("unauthorized");
         }
-        CreateGamesRequest tempRequest = serializer.fromJson(req.body(),CreateGamesRequest.class);
+        CreateGamesRequest tempRequest = serializer.fromJson(req.body(), CreateGamesRequest.class);
         if (tempRequest.gameName() == null) {
             throw new BadRequestsException("bad request");
         }

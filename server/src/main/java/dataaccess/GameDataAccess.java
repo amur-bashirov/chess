@@ -1,6 +1,5 @@
 package dataaccess;
 
-import DataObjects.DataAccessException;
 import model.GameData;
 import DataObjects.OccupiedException;
 
@@ -10,9 +9,9 @@ public interface GameDataAccess {
 
     ArrayList<GameData> listGames() throws DataAccessException;
     GameData getGame(String gameName) throws DataAccessException;
-    GameData createGame(String gameName) throws DataAccessException;
-    GameData getGame2(int gameID) throws DataAccessException;
+    GameData createGame(String gameName) throws dataaccess.DataAccessException;
+    GameData getGame2(int gameID) throws dataaccess.DataAccessException;
     void updateGame(String gameColor, int gameID, String username) throws OccupiedException, DataAccessException;
-    void clear() throws DataAccessException;
+    void clear() throws dataaccess.DataAccessException;
 
 }
