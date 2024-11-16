@@ -35,9 +35,11 @@ public class DrawChessBoard {
         drawHeader(out, color);
         out.println();
         if (color.equalsIgnoreCase("BLACK")) {
-            drawBoardFromBlack(out);
+            String[][] board = drawBoardFromBlack(out);
+            drawBoard(out,board,color);
         } else if(color.equalsIgnoreCase("WHITE")) {
-            drawBoardFromWhite(out);
+            String[][] board = drawBoardFromWhite(out);
+            drawBoard(out,board,color);
         }
         drawHeader(out, color);
     }
@@ -59,7 +61,7 @@ public class DrawChessBoard {
         out.print(SET_BG_COLOR_BLACK);
     }
 
-    static void drawBoardFromBlack(PrintStream out) {
+    static String[][] drawBoardFromBlack(PrintStream out) {
         String[][] board = {
                 BLACK_BACK_ROW,
                 BLACK_PAWN_ROW,
@@ -71,10 +73,10 @@ public class DrawChessBoard {
                 WHITE_BACK_ROW
         };
         out.print(SET_TEXT_COLOR_BLUE);
-        drawBoard(out, board);
+        return board;
     }
 
-    static void drawBoardFromWhite(PrintStream out) {
+    static String[][] drawBoardFromWhite(PrintStream out) {
         String[][] board = {
                 WHITE_BACK_ROW,
                 WHITE_PAWN_ROW,
@@ -86,15 +88,19 @@ public class DrawChessBoard {
                 BLACK_BACK_ROW
         };
         out.print(SET_TEXT_COLOR_YELLOW);
-        drawBoard(out, board);
+        return board;
     }
 
-    static void drawBoard(PrintStream out, String[][] board) {
+    static void drawBoard(PrintStream out, String[][] board, String color) {
         boolean isDarkSquare;
         for (int row = 0; row < board.length; row++) {
             out.print(SET_BG_COLOR_DARK_GREEN);
             out.print(SET_TEXT_COLOR_RED);
-            out.print(8 - row + " " );
+            if (color.equalsIgnoreCase("BLACK")) {
+                out.print(1 + row + " " );
+            } else if(color.equalsIgnoreCase("WHITE")) {
+                out.print(8 - row + " " );
+            }
             isDarkSquare = row % 2 == 0;
 
             for (int col = 0; col < board[row].length; col++) {
@@ -109,7 +115,11 @@ public class DrawChessBoard {
             }
             out.print(SET_BG_COLOR_DARK_GREEN);
             out.print(SET_TEXT_COLOR_RED);
-            out.print((8 - row + " "));
+            if (color.equalsIgnoreCase("BLACK")) {
+                out.print(1 + row + " " );
+            } else if(color.equalsIgnoreCase("WHITE")) {
+                out.print(8 - row + " " );
+            }
             out.print(SET_BG_COLOR_BLACK);
             out.println();
         }
