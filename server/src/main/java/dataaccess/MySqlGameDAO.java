@@ -130,11 +130,11 @@ public class MySqlGameDAO implements GameDataAccess {
                            String username) throws OccupiedException, DataAccessException {
 
         GameData data = getGame2(gameID);
-        if (Objects.equals(gameColor, "WHITE") && data.whiteUsername() == null) {
+        if (gameColor.equalsIgnoreCase( "WHITE") && data.whiteUsername() == null) {
             String statement = "UPDATE game SET whiteUsername = ? WHERE gameId = ?";
 
             executeUpdate(statement, username, gameID);
-        } else if (Objects.equals(gameColor, "BLACK") && data.blackUsername() == null) {
+        } else if (gameColor.equalsIgnoreCase("BLACK") && data.blackUsername() == null) {
             String statement = "UPDATE game SET blackUsername = ? WHERE gameId = ?";
             executeUpdate(statement, username, gameID);
         } else {

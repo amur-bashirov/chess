@@ -1,6 +1,7 @@
 package ui;
 
 import DataObjects.*;
+import model.GameData;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
@@ -59,6 +60,10 @@ public class PostloginClient {
     public String logout() throws ResponseException{
         LogoutRequest request = new LogoutRequest(authToken);
         server.logout(request,authToken);
+        boolean exception = server.getException();
+        if(exception == true){
+            return "";
+        }
         this.state = State.LOGEDOUT;
         return String.format("You are logged out");
     }
@@ -81,11 +86,15 @@ public class PostloginClient {
                 String color = params[1];
                 JoinGameRequest request = new JoinGameRequest(authToken, color, id);
                 server.joinGame(request, authToken);
+                boolean exception = server.getException();
+                if(exception == true){
+                    return "";
+                }
                 DrawChessBoard.draw(color);
+                return String.format("\nYou joined game as %s.",color);
             }
+        }
             throw new ResponseException(415, "\"Incorrect syntax for join, dummy.\"");
-        } throw new ResponseException(415, "\"Incorrect syntax for join, dummy.\"");
-
 
     }
 
@@ -94,6 +103,10 @@ public class PostloginClient {
             String gameName = params[0];
             CreateGamesRequest request = new CreateGamesRequest(authToken, gameName);
             CreateGameResult result = server.createGame(request, authToken);
+            boolean exception = server.getException();
+            if(exception == true){
+                return "";
+            }
             return String.format("You created game: %s.", gameName);
         }
         throw new ResponseException(415,"\"Incorrect syntax for create, dummy.\"");
@@ -103,13 +116,36 @@ public class PostloginClient {
     public String list() throws ResponseException{
         ListGamesRequest request = new ListGamesRequest(authToken);
         ListGamesResult result = server.listGames(request, authToken);
+        boolean exception = server.getException();
+        if(exception == true){
+            return "";
+        }
         String result2 = "";
         if (result == null){
             result2 = "There are no games";
             return (result2);
         }else {
-            result2 = "These are available games: ";
-            return (result2 + result.toString());
+            result2 = "These are available games:\n";
+            for (int i = 0; i < result.games().size();i++){
+                GameData data = result.games().get(i);
+                int id = data.gameID();
+                String whiteUser = data.whiteUsername();
+                if(whiteUser == null){
+                    whiteUser = "available";
+                }
+                String blackUser = data.blackUsername();
+                if(blackUser == null){
+                    blackUser = "available";
+                }
+                String gameName = data.gameName();
+                result2 += "Game ID: " + id + "\n";
+                result2 += "Game Name: " + gameName + "\n";
+                result2 += "White Player: " + whiteUser + "\n";
+                result2 += "Black Player: " + blackUser + "\n";
+                result2 += "----------------------\n";
+
+            }
+            return result2;
         }
     }
 

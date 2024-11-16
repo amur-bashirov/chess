@@ -48,6 +48,10 @@ public class PreloginClient {
             String email = params[2];
             RegisterRequest request = new RegisterRequest(userName, password, email);
             RegisterResult result = server.register(request);
+            boolean exception = server.getException();
+            if(exception == true){
+                return "";
+            }
             if (result != null) {
                 authToken = result.authToken();
                 this.state = State.LOGEDIN;
@@ -75,6 +79,10 @@ public class PreloginClient {
                 String password = params[1];
                 LoginRequest logRequest = new LoginRequest(userName, password);
                 LoginResult logResult = server.login(logRequest);
+                boolean exception = server.getException();
+                if(exception == true){
+                    return "";
+                }
                 if (logResult != null) {
                     this.state = State.LOGEDIN;
                     authToken = logResult.authToken();

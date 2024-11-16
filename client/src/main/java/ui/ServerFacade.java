@@ -13,6 +13,7 @@ import java.net.URL;
 
 public class ServerFacade {
     private final String serverUrl;
+    private boolean exception = false;
 
     public ServerFacade(String serverUrl) {
         this.serverUrl = serverUrl;
@@ -46,6 +47,9 @@ public class ServerFacade {
         makeRequest("PUT",path,request,null, authToken);
     }
 
+    public boolean getException() {
+        return exception;
+    }
 
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass, String authToken) throws ResponseException {
         try {
@@ -60,16 +64,22 @@ public class ServerFacade {
             return readBody(http, responseClass);
         } catch (ResponseException ex) {
             System.out.println("ResponseException");
+            this.exception = true;
         } catch (IOException ex){
             System.out.println("IOException: " + ex.getMessage());
+            this.exception = true;
         } catch (URISyntaxException e) {
             System.out.println("Incorrect Syntax, dummy.");
+            this.exception = true;
         } catch (BadRequestsException ex){
             System.out.println("Bad Request, dummy.");
+            this.exception = true;
         } catch (OccupiedException ex){
             System.out.println("It is already taken, dummy.");
+            this.exception = true;
         } catch(DataAccessException ex){
             System.out.println("It is not accessible, dummy.");
+            this.exception = true;
         }
         return null;
     }
