@@ -1,4 +1,4 @@
-package Server;
+package server;
 
 import DataObjects.*;
 import com.google.gson.Gson;
