@@ -41,7 +41,6 @@ public class DrawChessBoard {
         }
         drawHeader(out, color);
     }
-
     static void drawHeader(PrintStream out,String color) {
         out.print(SET_BG_COLOR_DARK_GREEN);
         out.print(SET_TEXT_COLOR_RED);
