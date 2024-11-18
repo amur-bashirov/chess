@@ -1,8 +1,8 @@
 package ui;
 
-import dataObjects.*;
+import objects.*;
 import com.google.gson.Gson;
-import dataObjects.OccupiedException;
+import objects.OccupiedException;
 
 
 import java.io.*;

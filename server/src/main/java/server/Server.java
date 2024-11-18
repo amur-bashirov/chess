@@ -1,6 +1,6 @@
 package server;
 
-import dataObjects.*;
+import objects.*;
 import com.google.gson.Gson;
 import dataaccess.*;
 import service.*;

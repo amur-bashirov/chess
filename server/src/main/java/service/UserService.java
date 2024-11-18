@@ -7,7 +7,7 @@ import dataaccess.UserDataAccess;
 import model.AuthData;
 import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
-import dataObjects.*;
+import objects.*;
 
 
 public class UserService {

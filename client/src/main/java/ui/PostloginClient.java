@@ -1,6 +1,6 @@
 package ui;
 
-import dataObjects.*;
+import objects.*;
 import model.GameData;
 
 import java.util.Arrays;

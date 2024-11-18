@@ -4,7 +4,7 @@ import model.AuthData;
 import model.GameData;
 import model.UserData;
 import org.junit.jupiter.api.*;
-import dataObjects.OccupiedException;
+import objects.OccupiedException;
 
 import java.util.ArrayList;
 

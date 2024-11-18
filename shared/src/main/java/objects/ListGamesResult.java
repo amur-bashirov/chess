@@ -1,4 +1,4 @@
-package dataObjects;
+package objects;
 
 import model.GameData;
 

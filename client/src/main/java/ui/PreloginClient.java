@@ -1,9 +1,9 @@
 package ui;
 
-import dataObjects.LoginRequest;
-import dataObjects.LoginResult;
-import dataObjects.RegisterRequest;
-import dataObjects.RegisterResult;
+import objects.LoginRequest;
+import objects.LoginResult;
+import objects.RegisterRequest;
+import objects.RegisterResult;
 
 
 import java.util.Arrays;
