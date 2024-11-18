@@ -55,7 +55,8 @@ public class DrawChessBoard {
             out.print(letter + "\u2003 ");
         }
         out.print(" ");
-        out.print(SET_BG_COLOR_BLACK);
+        out.print(SET_BG_COLOR_DARK_GREY);
+        out.print(SET_TEXT_COLOR_GREEN);
     }
 
     static String[][] drawBoardFromBlack(PrintStream out) {
@@ -84,7 +85,6 @@ public class DrawChessBoard {
                 BLACK_PAWN_ROW,
                 BLACK_BACK_ROW
         };
-        out.print(SET_TEXT_COLOR_YELLOW);
         return board;
     }
 
@@ -104,7 +104,7 @@ public class DrawChessBoard {
                 if (isDarkSquare) {
                     out.print(SET_BG_COLOR_LIGHT_GREY);
                 } else {
-                    out.print(SET_BG_COLOR_BLACK);
+                    out.print(SET_BG_COLOR_DARK_GREY);
                 }
                 out.print(SET_TEXT_COLOR_BLUE);
                 out.print(board[row][col]);
@@ -117,7 +117,7 @@ public class DrawChessBoard {
             } else if(color.equalsIgnoreCase("WHITE")) {
                 out.print(8 - row + " " );
             }
-            out.print(SET_BG_COLOR_BLACK);
+            out.print(SET_BG_COLOR_DARK_GREY);
             out.println();
         }
     }
