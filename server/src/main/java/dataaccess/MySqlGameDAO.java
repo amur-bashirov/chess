@@ -3,7 +3,7 @@ package dataaccess;
 import chess.ChessGame;
 import com.google.gson.Gson;
 import model.GameData;
-import DataObjects.OccupiedException;
+import dataObjects.OccupiedException;
 
 
 import java.sql.ResultSet;

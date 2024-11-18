@@ -1,15 +1,12 @@
 package ui;
 
-import DataObjects.LoginRequest;
-import DataObjects.LoginResult;
-import DataObjects.RegisterRequest;
-import DataObjects.RegisterResult;
+import dataObjects.LoginRequest;
+import dataObjects.LoginResult;
+import dataObjects.RegisterRequest;
+import dataObjects.RegisterResult;
 
 
 import java.util.Arrays;
-
-import static java.awt.Color.ORANGE;
-import static ui.EscapeSequences.SET_TEXT_COLOR_ORANGE;
 
 public class PreloginClient {
 

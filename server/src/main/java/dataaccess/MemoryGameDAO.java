@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import chess.ChessGame;
 import model.GameData;
-import DataObjects.OccupiedException;
+import dataObjects.OccupiedException;
 
 import java.util.Objects;
 

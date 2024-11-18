@@ -14,7 +14,7 @@
     <packaging>jar</packaging>
 
     <build>
-        <finalName>DataObjects</finalName>
+        <finalName>dataObjects</finalName>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>

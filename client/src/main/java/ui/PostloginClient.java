@@ -1,13 +1,9 @@
 package ui;
 
-import DataObjects.*;
+import dataObjects.*;
 import model.GameData;
 
-import java.io.PrintStream;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-
-import static ui.EscapeSequences.ERASE_SCREEN;
 
 public class PostloginClient {
 

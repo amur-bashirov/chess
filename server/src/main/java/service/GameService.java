@@ -6,7 +6,7 @@ import dataaccess.DataAccessException;
 import dataaccess.GameDataAccess;
 import model.AuthData;
 import model.GameData;
-import DataObjects.*;
+import dataObjects.*;
 
 import java.util.ArrayList;
 

@@ -1,6 +1,6 @@
 package client;
 
-import DataObjects.*;
+import dataObjects.*;
 import server.Server;
 import org.junit.jupiter.api.*;
 import ui.ResponseException;

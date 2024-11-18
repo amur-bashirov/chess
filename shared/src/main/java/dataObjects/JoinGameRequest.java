@@ -1,4 +1,4 @@
-package DataObjects;
+package dataObjects;
 
 public record JoinGameRequest(String authToken, String playerColor, int gameID) {
 }
