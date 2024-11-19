@@ -1,5 +1,6 @@
 package client;
 
+import com.sun.net.httpserver.Request;
 import objects.*;
 import server.Server;
 import org.junit.jupiter.api.*;
@@ -8,6 +9,7 @@ import ui.ServerFacade;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.lang.reflect.Method;
 
 
 public class ServerFacadeTests {
@@ -32,7 +34,7 @@ public class ServerFacadeTests {
         server = new Server();
         var port = server.run(0);
         System.out.println("Started test HTTP server on " + port);
-        serverUrl = serverUrl + port;
+        serverUrl = "http://localhost:" + port;
 
         serverFacade = new ServerFacade(serverUrl);
     }
@@ -42,10 +44,12 @@ public class ServerFacadeTests {
 
 
 
+
     @Test
     public void successRegisterTest() throws ResponseException {
         RegisterRequest request =
-                new RegisterRequest("tusername","tpassword","temail");
+                new RegisterRequest(
+                        "successRegisterTest","successRegisterTest","successRegisterTest");
         RegisterResult result = serverFacade.register(request);
         Assertions.assertNotNull(result, "ServerFacade returned an empty file");
         Assertions.assertEquals(request.username(),result.username(),"different usernames");
@@ -76,7 +80,7 @@ public class ServerFacadeTests {
     @Test
     public void successLoginTest() throws ResponseException{
         RegisterRequest request =
-                new RegisterRequest("tusername","tpassword","temail");
+                new RegisterRequest("logintest","logintest","loginestest");
         RegisterResult result = serverFacade.register(request);
         LogoutRequest request2 = new LogoutRequest(result.authToken());
         serverFacade.logout(request2,result.authToken());
@@ -88,25 +92,32 @@ public class ServerFacadeTests {
     @Test
     public void failureLoginTest() throws ResponseException{
         RegisterRequest request =
-                new RegisterRequest("tusername","tpassword","temail");
+                new RegisterRequest("failureLoginTest", "failureLoginTest", "failureLoginTest");
         RegisterResult result = serverFacade.register(request);
         LogoutRequest logoutRequest = new LogoutRequest(result.authToken());
-        serverFacade.logout(logoutRequest,result.authToken());
+        serverFacade.logout(logoutRequest, result.authToken());
         LoginRequest invalidLoginRequest = new LoginRequest("tusername", "wrongpassword");
+
+        // Capture the system output
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PrintStream originalOut = System.out;
         System.setOut(new PrintStream(outputStream));
 
-        try {
-            serverFacade.login(invalidLoginRequest);
-            Assertions.fail("Expected ResponseException was not thrown");
-        } catch (ResponseException ex) {
-            String output = outputStream.toString();
-            Assertions.assertTrue(output.contains("ResponseException"), "Expected exception message not printed.");
-        }
-        System.setOut(originalOut);
+        // Perform the login (this should trigger the error and print the message)
+        serverFacade.login(invalidLoginRequest);
 
+        // Capture the printed output
+        String output = outputStream.toString();
+
+        // Check if the correct error message is printed
+        Assertions.assertTrue(output.contains("It is not accessible, dummy."),
+                "Expected exception message not printed. Output was: " + output);
+
+        // Restore the original System.out
+        System.setOut(originalOut);
     }
+
+
 
     @Test
     public void successLogoutTest() throws ResponseException {
@@ -138,7 +149,8 @@ public class ServerFacadeTests {
 
     @Test
     public void successCreateGameTest() throws ResponseException {
-        RegisterRequest registerRequest = new RegisterRequest("tusername", "tpassword", "temail");
+        RegisterRequest registerRequest = new RegisterRequest(
+                "successCreateGameTest", "successCreateGameTest", "successCreateGameTest");
         RegisterResult registerResult = serverFacade.register(registerRequest);
         CreateGamesRequest createGameRequest = new CreateGamesRequest(registerResult.authToken(), "game description");
         CreateGameResult result = serverFacade.createGame(createGameRequest,registerResult.authToken());
@@ -149,7 +161,8 @@ public class ServerFacadeTests {
 
     @Test
     public void failureCreateGameTest() throws ResponseException {
-        RegisterRequest registerRequest = new RegisterRequest("tusername", "tpassword", "temail");
+        RegisterRequest registerRequest = new RegisterRequest(
+                "tusername", "tpassword", "temail");
         RegisterResult registerResult = serverFacade.register(registerRequest);
         CreateGamesRequest invalidCreateGameRequest = new CreateGamesRequest("", "description");
 
@@ -171,7 +184,8 @@ public class ServerFacadeTests {
     // Test listGames method
     @Test
     public void successListGamesTest() throws ResponseException {
-        RegisterRequest registerRequest = new RegisterRequest("tusername", "tpassword", "temail");
+        RegisterRequest registerRequest = new RegisterRequest(
+                "successListGamesTest", "successListGamesTest", "successListGamesTest");
         RegisterResult registerResult = serverFacade.register(registerRequest);
         ListGamesRequest listGamesRequest = new ListGamesRequest(registerResult.authToken());
         ListGamesResult result = serverFacade.listGames(listGamesRequest,registerResult.authToken());
@@ -181,7 +195,8 @@ public class ServerFacadeTests {
 
     @Test
     public void failureListGamesTest() throws ResponseException {
-        RegisterRequest registerRequest = new RegisterRequest("tusername", "tpassword", "temail");
+        RegisterRequest registerRequest = new RegisterRequest(
+                "tusername", "tpassword", "temail");
         RegisterResult registerResult = serverFacade.register(registerRequest);
 
         ListGamesRequest invalidListGamesRequest = new ListGamesRequest("random");
@@ -203,7 +218,8 @@ public class ServerFacadeTests {
 
     @Test
     public void successJoinGameTest() throws ResponseException {
-        RegisterRequest registerRequest = new RegisterRequest("tusername", "tpassword", "temail");
+        RegisterRequest registerRequest = new RegisterRequest(
+                "successJoinGameTest", "successJoinGameTest", "successJoinGameTest");
         RegisterResult registerResult = serverFacade.register(registerRequest);
         CreateGamesRequest createGameRequest = new CreateGamesRequest(registerResult.authToken(), "description");
         CreateGameResult createGameResult = serverFacade.createGame(createGameRequest, registerResult.authToken());
