@@ -34,7 +34,6 @@ public class PostloginClient {
                 case"observe" -> observe(params);
                 case "create" -> create(params);
                 case "list" ->list();
-                case "quit" -> "quit";
                 default -> help();
             };
         } catch (ResponseException ex) {
@@ -188,7 +187,6 @@ public class PostloginClient {
                 "join <ID> [WHITE][BLACK] - a game\n" +
                 "observe <ID> - a game\n" +
                 "logout - when you are done\n" +
-                "quit - playing chess\n" +
                 "help - with possible commands";
         return result;
     }

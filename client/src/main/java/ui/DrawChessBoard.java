@@ -8,13 +8,17 @@ public class DrawChessBoard {
     private final String color;
 
     private static final String[] BLACK_BACK_ROW = {BLACK_ROOK, BLACK_KNIGHT,
-            BLACK_BISHOP, BLACK_QUEEN, BLACK_KING, BLACK_BISHOP, BLACK_KNIGHT, BLACK_ROOK};
+            BLACK_BISHOP,BLACK_KING,BLACK_QUEEN, BLACK_BISHOP, BLACK_KNIGHT, BLACK_ROOK};
+    private static final String[] BLACK_BACK_ROW2 = {BLACK_ROOK, BLACK_KNIGHT,
+            BLACK_BISHOP,BLACK_QUEEN, BLACK_KING, BLACK_BISHOP, BLACK_KNIGHT, BLACK_ROOK};
     private static final String[] BLACK_PAWN_ROW = {BLACK_PAWN, BLACK_PAWN,
             BLACK_PAWN, BLACK_PAWN, BLACK_PAWN, BLACK_PAWN, BLACK_PAWN, BLACK_PAWN};
     private static final String[] WHITE_PAWN_ROW = {WHITE_PAWN, WHITE_PAWN,
             WHITE_PAWN, WHITE_PAWN, WHITE_PAWN, WHITE_PAWN, WHITE_PAWN, WHITE_PAWN};
     private static final String[] WHITE_BACK_ROW = {WHITE_ROOK, WHITE_KNIGHT,
-            WHITE_BISHOP, WHITE_QUEEN, WHITE_KING, WHITE_BISHOP, WHITE_KNIGHT, WHITE_ROOK};
+            WHITE_BISHOP, WHITE_KING,WHITE_QUEEN, WHITE_BISHOP, WHITE_KNIGHT, WHITE_ROOK};
+    private static final String[] WHITE_BACK_ROW2 = {WHITE_ROOK, WHITE_KNIGHT,
+            WHITE_BISHOP,WHITE_QUEEN, WHITE_KING, WHITE_BISHOP, WHITE_KNIGHT, WHITE_ROOK};
     private static final String[] EMPTY_ROW = {EMPTY, EMPTY,
             EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY};
 
@@ -76,14 +80,14 @@ public class DrawChessBoard {
 
     static String[][] drawBoardFromWhite(PrintStream out) {
         String[][] board = {
-                WHITE_BACK_ROW,
+                WHITE_BACK_ROW2,
                 WHITE_PAWN_ROW,
                 EMPTY_ROW,
                 EMPTY_ROW,
                 EMPTY_ROW,
                 EMPTY_ROW,
                 BLACK_PAWN_ROW,
-                BLACK_BACK_ROW
+                BLACK_BACK_ROW2
         };
         return board;
     }

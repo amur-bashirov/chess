@@ -35,7 +35,6 @@ public class PreloginClient {
         } catch (ResponseException ex) {
             return ex.getMessage();
         }
-
     }
 
     public String register(String...params) throws ResponseException {
@@ -53,12 +52,10 @@ public class PreloginClient {
                 authToken = result.authToken();
                 this.state = State.LOGEDIN;
                 return String.format("You are registered in as %s.", userName);
-            } else{
-                this.state = State.LOGEDOUT;
-                return help();
             }
 
         }
+        this.state = State.LOGEDOUT;
         throw new ResponseException(415,"\"Expected:<USERNAME> <PASSWORD> <EMAIL>, dummy.\"");
     }
 
@@ -84,11 +81,9 @@ public class PreloginClient {
                     this.state = State.LOGEDIN;
                     authToken = logResult.authToken();
                     return String.format("You logged in as %s.", userName);
-                }else{
-                    this.state = State.LOGEDOUT;
-                    return help();
                 }
         }
+        this.state = State.LOGEDOUT;
         throw new ResponseException(415,"Expected <USERNAME> <PASSWORD>, dummy.");
     }
 
