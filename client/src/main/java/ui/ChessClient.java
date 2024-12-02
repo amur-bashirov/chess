@@ -18,10 +18,10 @@ public class ChessClient {
         this.authToken = authToken;
     }
 
-    public String eval (String input,State state, String authToken) throws ResponseException{
+    public String eval(String input, State state, String authToken) throws ResponseException{
         this.authToken = authToken;
         this.state = state;
-        var tokens = input.toLowerCase().split(" ");
+        var tokens = input.toLowerCase().split("");
         var cmd = (tokens.length > 0) ? tokens[0] : "help";
         var params = Arrays.copyOfRange(tokens, 1, tokens.length);
         return switch (cmd) {
@@ -31,13 +31,21 @@ public class ChessClient {
 
     }
 
+    public State getState() {
+        return state;
+    }
+
+    public String getAuthToken() {
+        return authToken;
+    }
+
     private String help() {
         String result = "Available commands:\n" +
-                "create <Name> - a game\n" +
-                "list - games\n" +
-                "join <ID> [WHITE][BLACK] - a game\n" +
-                "observe <ID> - a game\n" +
-                "logout - when you are done\n" +
+                "redraw- chess board\n" +
+                "leave - the game\n" +
+                "make move - in the game\n" +
+                "resign  - from the game\n" +
+                "highlight - to see the possible moves\n" +
                 "help - with possible commands";
         return result;
     }

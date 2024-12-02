@@ -81,6 +81,7 @@ public class PostloginClient {
                 }
                 String color = "WHITE";
                 DrawChessBoard.draw(color);
+                state = state.INGAME;
                 return String.format("\nYou are observing the game: %s.", data.gameName());
             }
         }
@@ -115,6 +116,7 @@ public class PostloginClient {
                 if(exception == true){
                     return "";
                 }
+                state = state.INGAME;
                 DrawChessBoard.draw(color);
                 return String.format("\nYou joined game as %s.",color);
             }
