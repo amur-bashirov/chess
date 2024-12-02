@@ -45,10 +45,6 @@ public class UserGameCommand {
         return gameID;
     }
 
-    public ChessMove getMove() {
-        return move;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -66,5 +62,28 @@ public class UserGameCommand {
     @Override
     public int hashCode() {
         return Objects.hash(getCommandType(), getAuthToken(), getGameID());
+    }
+
+    public static class Move extends UserGameCommand{
+        private final ChessMove move;
+
+        public Move(CommandType commandType, String authToken, Integer gameID, ChessMove move) {
+            super(commandType, authToken, gameID);
+            this.move = move;
+        }
+        public ChessMove getMove() {
+            return move;
+        }
+
+        @Override
+        public String toString() {
+            return "Move{" +
+                    "commandType=" + getCommandType() +
+                    ", authToken='" + getAuthToken() + '\'' +
+                    ", gameID=" + getGameID() +
+                    ", move=" + move +
+                    '}';
+        }
+
     }
 }

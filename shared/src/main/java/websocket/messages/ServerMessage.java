@@ -41,4 +41,67 @@ public class ServerMessage {
     public int hashCode() {
         return Objects.hash(getServerMessageType());
     }
+
+
+    public static class LoadGameMessage extends ServerMessage {
+        private final Object game; // is it supposed to be game from the Chessboard class?
+
+        public LoadGameMessage(Object game) {
+            super(ServerMessageType.LOAD_GAME);
+            this.game = game;
+        }
+
+        public Object getGame() {
+            return game;
+        }
+
+        @Override
+        public String toString() {
+            return "LoadGameMessage{" +
+                    "game=" + game +
+                    '}';
+        }
+    }
+
+
+    public static class ErrorMessage extends ServerMessage {
+        private final String errorMessage;
+
+        public ErrorMessage(String errorMessage) {
+            super(ServerMessageType.ERROR);
+            this.errorMessage = errorMessage;
+        }
+
+        public String getErrorMessage() {
+            return errorMessage;
+        }
+
+        @Override
+        public String toString() {
+            return "ErrorMessage{" +
+                    "errorMessage='" + errorMessage + '\'' +
+                    '}';
+        }
+    }
+
+
+    public static class NotificationMessage extends ServerMessage {
+        private final String message;
+
+        public NotificationMessage(String message) {
+            super(ServerMessageType.NOTIFICATION);
+            this.message = message;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        @Override
+        public String toString() {
+            return "NotificationMessage{" +
+                    "message='" + message + '\'' +
+                    '}';
+        }
+    }
 }
