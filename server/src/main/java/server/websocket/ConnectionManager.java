@@ -18,7 +18,7 @@ public class ConnectionManager {
         connections.remove(visitorName);
     }
 
-    public <T> void broadcast(String excludeVisitorName, T notification) throws IOException {
+    public void broadcast(String excludeVisitorName, ServerMessage notification) throws IOException {
         var removeList = new ArrayList<Connection>();
         for (var c : connections.values()) {
             if (c.session.isOpen()) {
