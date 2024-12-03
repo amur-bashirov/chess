@@ -18,7 +18,7 @@ public class ConnectionManager {
         connections.remove(visitorName);
     }
 
-    public void broadcast(String excludeVisitorName, ServerMessage.ServerMessageType notification) throws IOException {
+    public <T> void broadcast(String excludeVisitorName, T notification) throws IOException {
         var removeList = new ArrayList<Connection>();
         for (var c : connections.values()) {
             if (c.session.isOpen()) {
@@ -30,7 +30,7 @@ public class ConnectionManager {
             }
         }
 
-        // Clean up any connections that were left open.
+
         for (var c : removeList) {
             connections.remove(c.getName());
         }

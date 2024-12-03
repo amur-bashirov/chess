@@ -85,10 +85,10 @@ public class ServerMessage {
     }
 
 
-    public static class NotificationMessage extends ServerMessage {
+    public static class notificationMessage extends ServerMessage {
         private final String message;
 
-        public NotificationMessage(String message) {
+        public notificationMessage(String message) {
             super(ServerMessageType.NOTIFICATION);
             this.message = message;
         }

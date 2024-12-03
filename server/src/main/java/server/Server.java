@@ -3,6 +3,7 @@ package server;
 import objects.*;
 import com.google.gson.Gson;
 import dataaccess.*;
+import server.websocket.WebSocketHandler;
 import service.*;
 import spark.*;
 
@@ -18,6 +19,7 @@ public class Server {
     private final GameService gameService ;
     private final ClearAccess clearAccess ;
     private final ClearService clearService ;
+    private final WebSocketHandler webSocketHandler;
 
     public Server() {
         try {
@@ -35,9 +37,9 @@ public class Server {
         gameService = new GameService(gameAccess, authAccess);
          this.clearAccess = new MySqlClear();
          clearService = new ClearService(clearAccess);
+         this.webSocketHandler = new WebSocketHandler(
+                 authAccess,userAccess,userService,gameAccess, gameService,clearAccess, clearService);
     }
-
-    //public Server()
 
 
     public int run(int desiredPort) {
@@ -45,9 +47,7 @@ public class Server {
 
         Spark.staticFiles.location("web");
 
-        // Register your endpoints and handle exceptions here.
-
-        //This line initializes the server and can be removed once you have a functioning endpoint 
+        Spark.webSocket("/ws", webSocketHandler);
         Spark.init();
         Spark.post("/user",this::register);
         Spark.exception(DataAccessException.class, this::handleDataAccessException);
