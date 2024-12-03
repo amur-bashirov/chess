@@ -23,8 +23,8 @@ public class WebSocketFacade {
             this.session.addMessageHandler(new MessageHandler.Whole<String>() {
                 @Override
                 public void onMessage(String message) {
-                    ServerMessage.ServerMessageType notification =
-                            new Gson().fromJson(message, ServerMessage.ServerMessageType.class);
+                    ServerMessage notification =
+                            new Gson().fromJson(message, ServerMessage.class);
                     notificationHandler.notify(notification);
                 }
             });
@@ -32,7 +32,7 @@ public class WebSocketFacade {
             throw new ResponseException(500, ex.getMessage());
         }
     }
-    @Override
+
     public void onOpen(Session session, EndpointConfig endpointConfig){
     }
 }

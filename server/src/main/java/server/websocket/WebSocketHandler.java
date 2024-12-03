@@ -4,6 +4,7 @@ import chess.ChessMove;
 import com.google.gson.Gson;
 import dataaccess.*;
 import model.AuthData;
+import model.GameData;
 import model.UserData;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
@@ -81,36 +82,66 @@ public class WebSocketHandler {
        try {
            ConnectionManager connectionManager = connectionManagers.get(gameId);
            if (connectionManager != null){
-               // do I need to specify that it is observer or player?
-               var message = String.format("%s is in the the game", username);
-               var notification = new ServerMessage.notificationMessage(message);
-               connectionManager.broadcast(username, notification);
+               GameData data = gameAccess.getGame2(gameId);
+               if (data != null){
+                   if(data.whiteUsername().equals(username)){
+                       var message = String.format("%s is in the the game as white player", username);
+                       var notification = new ServerMessage.notificationMessage(message);
+                       connectionManager.broadcast(username, notification);
+                   } else if(data.blackUsername().equals(username)){
+                       var message = String.format("%s is in the the game as black player", username);
+                       var notification = new ServerMessage.notificationMessage(message);
+                       connectionManager.broadcast(username, notification);
+                   } else {
+                       var message = String.format("%s is in the the game as observer", username);
+                       var notification = new ServerMessage.notificationMessage(message);
+                       connectionManager.broadcast(username, notification);
+                   }
+               } else {
+                   throw new DataAccessException("The game was not found");
+               }
            } else{
                throw new DataAccessException("The game was not found");
            }
 
-       } catch (IOException ex){
-           ex.printStackTrace();
+       }catch (DataAccessException ex){
            sendError(ex, session);
-       } catch (DataAccessException ex){
+       }catch (IOException ex) {
+           ex.printStackTrace();
            sendError(ex, session);
        }
     }
-    void makeMove(Session session, String username,String message, int gameId){
-        Gson serializer = new Gson();
-        UserGameCommand.Move move = serializer.fromJson(message, UserGameCommand.Move.class);
-        connections.add(username, session);
+    void makeMove(Session session, String username,String message, int gameId) throws DataAccessException, IOException {
+        try {
+            Gson serializer = new Gson();
+            UserGameCommand.Move move = serializer.fromJson(message, UserGameCommand.Move.class);
+            ConnectionManager connectionManager = connectionManagers.get(gameId);
+            if (connectionManager != null) {
+                //?
+            } else {
+                throw new DataAccessException("The game was not found");
+            }
+        } catch (DataAccessException ex){
+            sendError(ex, session);
+        }
 
     }
     void leave(Session session, String username, int gameId) throws IOException {
        try {
-           connections.remove(username);
-           var message = String.format("%s left the the game", username);
-           var notification = new ServerMessage.notificationMessage(message);
-           connections.broadcast(username, notification);
+           ConnectionManager connectionManager = connectionManagers.get(gameId);
+           if (connectionManager != null) {
+               connectionManager.remove(username);
+               var message = String.format("%s left the the game", username);
+               var notification = new ServerMessage.notificationMessage(message);
+               connectionManager.broadcast(username, notification);
+           }else{
+               throw new DataAccessException("The game was not found");
+           }
            //do I need to logout? or update the game?
        } catch (IOException ex){
            ex.printStackTrace();
+           sendError(ex, session);
+       } catch (DataAccessException ex) {
            sendError(ex, session);
        }
     }
