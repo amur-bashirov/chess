@@ -25,6 +25,7 @@ import java.util.Map;
 
 public class WebSocketHandler {
     private Map<Integer, ConnectionManager> connectionManagers = new HashMap<>();
+    boolean stopGame = false;
     private final AuthDataAccess authAccess;
     private final UserDataAccess userAccess;
     private final UserService userService;
@@ -79,27 +80,34 @@ public class WebSocketHandler {
         session.getRemote().sendString(jsonResponse);
     }
 
+    public void send(GameData data, Session session, String message, String username,
+                     ConnectionManager connectionManager) throws IOException {
+        var notification = new ServerMessage.notificationMessage(message);
+        ServerMessage.LoadGameMessage game = new ServerMessage.LoadGameMessage(data.game());
+        session.getRemote().sendString(new Gson().toJson(game));
+        connectionManager.broadcast(username, notification);
+    }
+
 
 
     void connect(Session session, String username, int gameId) throws IOException {
        try {
+
            ConnectionManager connectionManager = connectionManagers.get(gameId);
            if (connectionManager != null){
                GameData data = gameAccess.getGame2(gameId);
                if (data != null){
+                   String message = "";
                    if(data.whiteUsername().equals(username)){
-                       var message = String.format("%s is in the the game as white player", username);
-                       var notification = new ServerMessage.notificationMessage(message);
-                       connectionManager.broadcast(username, notification);
+                       message = String.format("%s is in the the game as white player", username);
                    } else if(data.blackUsername().equals(username)){
-                       var message = String.format("%s is in the the game as black player", username);
-                       var notification = new ServerMessage.notificationMessage(message);
-                       connectionManager.broadcast(username, notification);
+                       message = String.format("%s is in the the game as black player", username);
                    } else {
-                       var message = String.format("%s is in the the game as observer", username);
-                       var notification = new ServerMessage.notificationMessage(message);
-                       connectionManager.broadcast(username, notification);
+                       message = String.format("%s is in the the game as observer", username);
                    }
+                   send(data,session,message,username,connectionManager);
+
+
                } else {
                    throw new DataAccessException("The game was not found");
                }
@@ -114,27 +122,51 @@ public class WebSocketHandler {
            sendError(ex, session);
        }
     }
+
     void makeMove(Session session, String username,String message, int gameId) throws DataAccessException, IOException {
         try {
+
+
             Gson serializer = new Gson();
             UserGameCommand.Move move = serializer.fromJson(message, UserGameCommand.Move.class);
             ConnectionManager connectionManager = connectionManagers.get(gameId);
+
             if (connectionManager != null) {
                 GameData data = gameAccess.getGame2(gameId);
+                if (stopGame) {
+                    String stopMessage = "The game is stopped.";
+                    send(data, session, stopMessage, username, connectionManager); // Sending the stop message
+                    return; // Exit early since the game is stopped
+                }
+
                 if (data != null) {
                     if (data.whiteUsername().equals(username)) {
                         ChessGame game = data.game();
                         game.makeMove(move.getMove());
                         ChessGame.TeamColor color = game.getTeamTurn();
+                        gameAccess.updateGame2(gameId,game);
+                        String message2 = "";
                         if (game.isInCheckmate(color)){
-                            var message2 = String.format("%s player is in the the checkmate", color.toString());
-                            var notification = new ServerMessage.notificationMessage(message2);
-                            connectionManager.broadcast(username, notification);
-                        } else
+                            String stopMessage = String.format("%s player is in the the checkmate the game is stopped", color.toString());
+                            send(data, session, stopMessage, username, connectionManager);// Sending the stop message
+                            stopGame = true;
+                            return;
+                        } else if(game.isInCheck(color)){
+                            message2 = String.format("%s player's king is in the the check", color.toString());
+                        } else if(game.isInStalemate(color)){
+                            message2 = String.format(" the game is in stalemate");
+                        } else{
+                            message2 = String.format("%s player is in the the checkmate", color.toString());
+                        }
+                        send(data,session,message2,username,connectionManager);
+
+
 
                     } else {throw new DataAccessException("The game was not found");}
                 }
             } else{throw new DataAccessException("The connection was not found");}
+
+
         } catch (DataAccessException ex){
             sendError(ex, session);
         } catch (InvalidMoveException ex){
@@ -165,8 +197,8 @@ public class WebSocketHandler {
         try{
             ConnectionManager connectionManager = connectionManagers.get(gameId);
             if (connectionManager != null) {
-
-                var message = String.format("%s resigned the the game", username);
+                stopGame = true;
+                var message = String.format("%s resigned from the game", username);
                 var notification = new ServerMessage.notificationMessage(message);
                 connectionManager.broadcast(username, notification);
             }
