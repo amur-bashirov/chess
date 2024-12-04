@@ -19,13 +19,13 @@ import spark.*;
 import websocket.messages.ServerMessage;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 @WebSocket
 public class WebSocketHandler {
-    private Map<Integer, ConnectionManager> connectionManagers = new HashMap<>();
+    private final ConnectionManager connectionManager = new ConnectionManager();
+
     private final AuthDataAccess authAccess;
     private final UserDataAccess userAccess;
     private final UserService userService;
@@ -46,6 +46,9 @@ public class WebSocketHandler {
 
     }
 
+
+
+
     @OnWebSocketMessage
     public void onMessage(Session session, String message) throws IOException {
         try{
@@ -55,14 +58,13 @@ public class WebSocketHandler {
             if (data == null){
                 throw new DataAccessException("Unauthorized access: Invalid auth token");
             } else {
-                ConnectionManager connectionManager = new ConnectionManager();
-                connectionManager.add(data.username(),session);
-                connectionManagers.put(command.getGameID(), new ConnectionManager());
+                Integer boxedGameId = command.getGameID();
+                connectionManager.add(data.username(),session,boxedGameId);
                 switch (command.getCommandType()) {
-                    case CONNECT -> connect(session, data.username(), command.getGameID());
-                    case MAKE_MOVE -> makeMove(session, data.username(),message, command.getGameID());
-                    case LEAVE -> leave(session, data.username(), command.getGameID());
-                    case RESIGN -> resign(session, data.username(), command.getGameID());
+                    case CONNECT -> connect(session, data.username(), boxedGameId);
+                    case MAKE_MOVE -> makeMove(session, data.username(),message, boxedGameId);
+                    case LEAVE -> leave(session, data.username(), boxedGameId);
+                    case RESIGN -> resign(session, data.username(), boxedGameId);
                 }
             }
         } catch (DataAccessException ex) {
@@ -90,20 +92,20 @@ public class WebSocketHandler {
 
 
 
-    void connect(Session session, String username, int gameId) throws IOException {
+    void connect(Session session, String username, Integer gameId) throws IOException {
        try {
 
-           ConnectionManager connectionManager = connectionManagers.get(gameId);
+
            if (connectionManager != null){
                GameData data = gameAccess.getGame2(gameId);
                if (data != null){
                    String message = "";
                    if(data.whiteUsername().equals(username)){
-                       message = String.format("%s is in the the game as white player", username);
+                       message = String.format("%s is in the game as white player", username);
                    } else if(data.blackUsername().equals(username)){
-                       message = String.format("%s is in the the game as black player", username);
+                       message = String.format("%s is in the game as black player", username);
                    } else {
-                       message = String.format("%s is in the the game as observer", username);
+                       message = String.format("%s is in the game as observer", username);
                    }
                    send(data,session,message,username,connectionManager);
 
@@ -123,13 +125,12 @@ public class WebSocketHandler {
        }
     }
 
-    void makeMove(Session session, String username,String message, int gameId) throws DataAccessException, IOException {
+    void makeMove(Session session, String username,String message, Integer gameId) throws DataAccessException, IOException {
         try {
-
 
             Gson serializer = new Gson();
             UserGameCommand.Move move = serializer.fromJson(message, UserGameCommand.Move.class);
-            ConnectionManager connectionManager = connectionManagers.get(gameId);
+
 
             if (connectionManager != null) {
                 GameData data = gameAccess.getGame2(gameId);
@@ -174,11 +175,11 @@ public class WebSocketHandler {
         }
 
     }
-    void leave(Session session, String username, int gameId) throws IOException {
+    void leave(Session session, String username, Integer gameId) throws IOException {
        try {
-           ConnectionManager connectionManager = connectionManagers.get(gameId);
+
            if (connectionManager != null) {
-               connectionManager.remove(username);
+               connectionManager.remove(username, gameId);
                session.close();
                var message = String.format("%s left the the game", username);
                var notification = new ServerMessage.notificationMessage(message);
@@ -193,9 +194,9 @@ public class WebSocketHandler {
            sendError(ex, session);
        }
     }
-    void resign(Session session, String username, int gameId) throws IOException {
+    void resign(Session session, String username, Integer gameId) throws IOException {
         try{
-            ConnectionManager connectionManager = connectionManagers.get(gameId);
+
             if (connectionManager != null) {
                 connectionManager.stopGame();
                 var message = String.format("%s resigned from the game", username);

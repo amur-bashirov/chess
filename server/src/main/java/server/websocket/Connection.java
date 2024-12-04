@@ -8,7 +8,7 @@ public class Connection {
     public Session session;
 
     public Connection(String name, Session session){
-        this.whiteName = whiteName;
+        this.whiteName = name;
         this.session = session;
     }
 

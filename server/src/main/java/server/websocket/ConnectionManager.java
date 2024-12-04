@@ -1,22 +1,39 @@
 package server.websocket;
+import com.google.gson.Gson;
 import org.eclipse.jetty.websocket.api.Session;
 import websocket.messages.ServerMessage;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ConnectionManager {
-    public final ConcurrentHashMap<String,Connection> connections = new ConcurrentHashMap<>();
+
+    private final Map<Integer, List<Connection>> connections = new ConcurrentHashMap<>();
     public boolean stopGame = false;
-    public void add(String name, Session session) {
+    public void add(String name, Session session, Integer gameId) {
         var connection = new Connection(name, session);
-        connections.put(name, connection);
+        connections.computeIfAbsent(gameId, k -> new CopyOnWriteArrayList<>()).add(connection);
     }
 
-    public void remove(String visitorName) {
-        connections.remove(visitorName);
+    public void remove(String visitorName, Integer gameId) {
+        // Retrieve the list of connections for the specified gameId
+        List<Connection> gameConnections = connections.get(gameId);
+
+        if (gameConnections != null) {
+            // Use removeIf to remove the specific connection with the matching name
+            gameConnections.removeIf(connection -> connection.getName().equals(visitorName));
+
+            // If the list is empty after removal, you can optionally remove the entry for the gameId
+            if (gameConnections.isEmpty()) {
+                connections.remove(gameId);
+            }
+        }
     }
+
 
     public boolean isStopGame() {
         return stopGame;
@@ -26,21 +43,30 @@ public class ConnectionManager {
         stopGame = true;
     }
 
+    public boolean hasSession(String username) {
+        return connections.containsKey(username); // Replace `sessions` with your actual data structure
+    }
+
+
     public void broadcast(String excludeVisitorName, ServerMessage notification) throws IOException {
         var removeList = new ArrayList<Connection>();
-        for (var c : connections.values()) {
-            if (c.session.isOpen()) {
-                if (!c.getName().equals(excludeVisitorName)) {
-                    c.send(notification.toString());
+        for (Map.Entry<Integer, List<Connection>> entry : connections.entrySet()) {
+            Integer gameId = entry.getKey(); // This is the key (gameId)
+            List<Connection> connectionList = entry.getValue();// This is the value (List<Connection>)
+            for (Connection connection : connectionList){
+                if(connection.session.isOpen()){
+                    if(!connection.getName().equals(excludeVisitorName)){
+                        connection.send(new Gson().toJson(notification));
+                    }
+                }else{
+                    removeList.add(connection);
                 }
-            } else {
-                removeList.add(c);
             }
-        }
+            for (var connection : removeList){
+                connections.remove(connection.getName(), gameId);
+            }
 
 
-        for (var c : removeList) {
-            connections.remove(c.getName());
         }
     }
 }
