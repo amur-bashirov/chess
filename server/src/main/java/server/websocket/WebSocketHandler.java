@@ -23,9 +23,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+@WebSocket
 public class WebSocketHandler {
     private Map<Integer, ConnectionManager> connectionManagers = new HashMap<>();
-    boolean stopGame = false;
     private final AuthDataAccess authAccess;
     private final UserDataAccess userAccess;
     private final UserService userService;
@@ -133,7 +133,7 @@ public class WebSocketHandler {
 
             if (connectionManager != null) {
                 GameData data = gameAccess.getGame2(gameId);
-                if (stopGame) {
+                if (connectionManager.isStopGame()) {
                     String stopMessage = "The game is stopped.";
                     send(data, session, stopMessage, username, connectionManager); // Sending the stop message
                     return; // Exit early since the game is stopped
@@ -149,7 +149,7 @@ public class WebSocketHandler {
                         if (game.isInCheckmate(color)){
                             String stopMessage = String.format("%s player is in the the checkmate the game is stopped", color.toString());
                             send(data, session, stopMessage, username, connectionManager);// Sending the stop message
-                            stopGame = true;
+                            connectionManager.stopGame();
                             return;
                         } else if(game.isInCheck(color)){
                             message2 = String.format("%s player's king is in the the check", color.toString());
@@ -197,7 +197,7 @@ public class WebSocketHandler {
         try{
             ConnectionManager connectionManager = connectionManagers.get(gameId);
             if (connectionManager != null) {
-                stopGame = true;
+                connectionManager.stopGame();
                 var message = String.format("%s resigned from the game", username);
                 var notification = new ServerMessage.notificationMessage(message);
                 connectionManager.broadcast(username, notification);

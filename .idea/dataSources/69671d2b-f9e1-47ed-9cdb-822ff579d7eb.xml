@@ -1012,7 +1012,7 @@ sys|schema||mysql.sys|localhost|TRIGGER|G</Grants>
     </schema>
     <schema id="292" parent="1" name="chess">
       <Current>1</Current>
-      <LastIntrospectionLocalTimestamp>2024-11-19.23:15:04</LastIntrospectionLocalTimestamp>
+      <LastIntrospectionLocalTimestamp>2024-12-04.06:18:14</LastIntrospectionLocalTimestamp>
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </schema>
     <user id="293" parent="1" name="mysql.infoschema">
