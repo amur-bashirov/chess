@@ -1,5 +1,7 @@
 package websocket.messages;
 
+import chess.ChessGame;
+
 import java.util.Objects;
 
 /**
@@ -44,9 +46,9 @@ public class ServerMessage {
 
 
     public static class LoadGameMessage extends ServerMessage {
-        private final Object game; // is it supposed to be game from the Chessboard class?
+        private final ChessGame game; // is it supposed to be game from the Chessboard class?
 
-        public LoadGameMessage(Object game) {
+        public LoadGameMessage(ChessGame game) {
             super(ServerMessageType.LOAD_GAME);
             this.game = game;
         }

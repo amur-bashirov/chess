@@ -1,6 +1,8 @@
 package server.websocket;
 
+import chess.ChessGame;
 import chess.ChessMove;
+import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import dataaccess.*;
 import model.AuthData;
@@ -17,6 +19,7 @@ import spark.*;
 import websocket.messages.ServerMessage;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -117,11 +120,24 @@ public class WebSocketHandler {
             UserGameCommand.Move move = serializer.fromJson(message, UserGameCommand.Move.class);
             ConnectionManager connectionManager = connectionManagers.get(gameId);
             if (connectionManager != null) {
-                //?
-            } else {
-                throw new DataAccessException("The game was not found");
-            }
+                GameData data = gameAccess.getGame2(gameId);
+                if (data != null) {
+                    if (data.whiteUsername().equals(username)) {
+                        ChessGame game = data.game();
+                        game.makeMove(move.getMove());
+                        ChessGame.TeamColor color = game.getTeamTurn();
+                        if (game.isInCheckmate(color)){
+                            var message2 = String.format("%s player is in the the checkmate", color.toString());
+                            var notification = new ServerMessage.notificationMessage(message2);
+                            connectionManager.broadcast(username, notification);
+                        } else
+
+                    } else {throw new DataAccessException("The game was not found");}
+                }
+            } else{throw new DataAccessException("The connection was not found");}
         } catch (DataAccessException ex){
+            sendError(ex, session);
+        } catch (InvalidMoveException ex){
             sendError(ex, session);
         }
 
@@ -131,13 +147,13 @@ public class WebSocketHandler {
            ConnectionManager connectionManager = connectionManagers.get(gameId);
            if (connectionManager != null) {
                connectionManager.remove(username);
+               session.close();
                var message = String.format("%s left the the game", username);
                var notification = new ServerMessage.notificationMessage(message);
                connectionManager.broadcast(username, notification);
            }else{
                throw new DataAccessException("The game was not found");
            }
-           //do I need to logout? or update the game?
        } catch (IOException ex){
            ex.printStackTrace();
            sendError(ex, session);
@@ -145,7 +161,18 @@ public class WebSocketHandler {
            sendError(ex, session);
        }
     }
-    void resign(Session session, String username, int gameId){
+    void resign(Session session, String username, int gameId) throws IOException {
+        try{
+            ConnectionManager connectionManager = connectionManagers.get(gameId);
+            if (connectionManager != null) {
 
+                var message = String.format("%s resigned the the game", username);
+                var notification = new ServerMessage.notificationMessage(message);
+                connectionManager.broadcast(username, notification);
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            sendError(ex, session);
+        }
     }
 }

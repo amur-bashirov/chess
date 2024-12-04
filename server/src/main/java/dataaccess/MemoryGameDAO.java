@@ -3,6 +3,7 @@ package dataaccess;
 import java.util.ArrayList;
 
 import chess.ChessGame;
+import chess.ChessMove;
 import model.GameData;
 import objects.OccupiedException;
 
@@ -88,6 +89,11 @@ public class MemoryGameDAO implements GameDataAccess{
                 }
             }
         }
+    }
+
+    @Override
+    public void updateGame2(int gameID, ChessGame game) {
+
     }
 
     @Override

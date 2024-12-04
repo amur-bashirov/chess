@@ -1,5 +1,7 @@
 package dataaccess;
 
+import chess.ChessGame;
+import chess.ChessMove;
 import model.GameData;
 import objects.OccupiedException;
 
@@ -12,6 +14,7 @@ public interface GameDataAccess {
     GameData createGame(String gameName) throws dataaccess.DataAccessException;
     GameData getGame2(int gameID) throws dataaccess.DataAccessException;
     void updateGame(String gameColor, int gameID, String username) throws OccupiedException, DataAccessException;
+    void updateGame2(int gameID, ChessGame game) throws DataAccessException;
     void clear() throws dataaccess.DataAccessException;
 
 }

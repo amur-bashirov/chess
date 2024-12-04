@@ -1,9 +1,11 @@
 package dataaccess;
 
 import chess.ChessGame;
+import chess.ChessMove;
 import com.google.gson.Gson;
 import model.GameData;
 import objects.OccupiedException;
+import websocket.commands.UserGameCommand;
 
 
 import java.sql.ResultSet;
@@ -138,6 +140,13 @@ public class MySqlGameDAO implements GameDataAccess {
         } else {
             throw new OccupiedException("Game is already full");
         }
+    }
+
+    @Override
+    public void updateGame2(int gameID, ChessGame game) throws DataAccessException {
+        String json = new Gson().toJson(game);
+        String statement = "UPDATE game SET gameJson = ? WHERE gameId = ?";
+        executeUpdate(statement,json,gameID);
     }
 
     @Override
