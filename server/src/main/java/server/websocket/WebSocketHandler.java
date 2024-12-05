@@ -209,7 +209,8 @@ public class WebSocketHandler {
         } catch (DataAccessException ex){
             sendError(ex, session);
         } catch (InvalidMoveException ex){
-            sendError(ex, session);
+            InvalidMoveException exception = new InvalidMoveException("Invalid move made in the game.");
+            sendError(exception, session);
         }
 
     }
