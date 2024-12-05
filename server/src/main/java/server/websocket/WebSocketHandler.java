@@ -65,12 +65,18 @@ public class WebSocketHandler {
             Gson serializer = new Gson();
             UserGameCommand command = serializer.fromJson(message, UserGameCommand.class);
             AuthData data = authAccess.getAuth(command.getAuthToken());
+            if(!session.isOpen()){
+                System.out.println("session is not open");
+            }
 
             if (data == null){
                 throw new DataAccessException("Unauthorized access: Invalid auth token");
             } else {
                 Integer boxedGameId = command.getGameID();
                 connectionManager.add(data.username(),session,boxedGameId);
+                if(!session.isOpen()){
+                    System.out.println("session is not open");
+                }
                 switch (command.getCommandType()) {
                     case CONNECT -> connect(session, data.username(), boxedGameId);
                     case MAKE_MOVE -> makeMove(session, data.username(),message, boxedGameId);
@@ -106,7 +112,9 @@ public class WebSocketHandler {
     void connect(Session session, String username, Integer gameId) throws IOException {
        try {
 
-
+           if(!session.isOpen()){
+               System.out.println("session is not open");
+           }
            if (connectionManager != null){
                GameData data = gameAccess.getGame2(gameId);
                if (data != null){
@@ -118,7 +126,13 @@ public class WebSocketHandler {
                    } else {
                        message = String.format("%s is in the game as observer", username);
                    }
+                   if(!session.isOpen()){
+                       System.out.println("session is not open");
+                   }
                    sendNotification(data,session,message,username,connectionManager);
+                   if(!session.isOpen()){
+                       System.out.println("session is not open");
+                   }
                    ServerMessage.LoadGameMessage game = new ServerMessage.LoadGameMessage(data.game());
                    String jsonString = new Gson().toJson(game);
                    System.out.println(jsonString);

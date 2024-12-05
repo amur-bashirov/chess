@@ -25,7 +25,7 @@ public class ConnectionManager {
         boolean exists = false;
         for (Connection conn : connectionsList) {
             if (conn.getName().equals(name)) {
-                exists = true;
+                remove(name,gameId);
                 break;
             }
         }
