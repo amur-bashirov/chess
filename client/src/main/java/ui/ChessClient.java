@@ -81,7 +81,8 @@ public class ChessClient {
     }
 
     private String redraw() {
-        String result = "";
+        DrawChessBoard.draw(game,null,color);
+        String result = "\nHere is redrawn board";
         return result;
     }
 
