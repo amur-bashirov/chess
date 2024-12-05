@@ -181,20 +181,24 @@ public class WebSocketHandler {
                         if (data.whiteUsername().equals(username) && !color.equals(ChessGame.TeamColor.WHITE)){
                             throw new DataAccessException("The chess piece belongs to black player");
                         }
-                        color = game.getTeamTurn();
+                        if (data.whiteUsername().equals(username)){
+                            color = ChessGame.TeamColor.BLACK;
+                        } else if (data.blackUsername().equals(username)){
+                            color = ChessGame.TeamColor.WHITE;
+                        }
                         game.makeMove(move.getMove());
                         gameAccess.updateGame2(gameId,game);
                         String message2 = "";
-                        if (game.isInCheckmate(color)){
+                        if (game.isInCheckmate(ChessGame.TeamColor.WHITE) || game.isInCheckmate(ChessGame.TeamColor.BLACK)){
                             message2 = String.format("%s player is in the the checkmate, the game is stopped", color.toString());
                             stops.put(gameId,true);
-                        } else if(game.isInCheck(color)){
+                        } else if(game.isInCheck(ChessGame.TeamColor.WHITE) || game.isInCheck(ChessGame.TeamColor.BLACK)){
                             message2 = String.format("%s player's king is in the the check", color.toString());
-                        } else if(game.isInStalemate(color)){
-                            message2 = String.format(" the game is in stalemate");
+                        } else if(game.isInStalemate(ChessGame.TeamColor.WHITE) || game.isInStalemate(ChessGame.TeamColor.BLACK)){
+                            message2 = String.format("The game is in stalemate");
                             stops.put(gameId, true);
                         } else{
-                            message2 = String.format("%s player moved piece at %s to %s", color.toString().toLowerCase(),
+                            message2 = String.format("player moved piece at %s to %s",
                                     move.getMove().getStartPosition().toString(),move.getMove().getEndPosition().toString());
                         }
                         sendNotification(data,session,message2,username,connectionManager, gameId);

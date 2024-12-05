@@ -4,6 +4,7 @@ package ui;
 
 
 
+import chess.ChessGame;
 import websocket.messages.ServerMessage;
 
 import java.util.Scanner;
@@ -19,13 +20,19 @@ public class Repl  implements NotificationHandler{
     private final PostloginClient postloginClient;
     private State state = State.LOGEDOUT;
     private String authToken = "";
-    private final ChessClient chessClient;
+    private ChessClient chessClient;
+    private NotificationHandler notificationHandler;
+    private WebSocketFacade ws;
+    private final String serverUrl;
+    private String color;
+    private ChessGame game;
 
 
-    public Repl(String serverUrl){
+    public Repl(String serverUrl) throws ResponseException {
+        this.serverUrl = serverUrl;
         preloginClient = new PreloginClient(serverUrl);
         postloginClient = new PostloginClient(serverUrl,state,authToken);
-        chessClient = new ChessClient(serverUrl, state, authToken);
+        chessClient = new ChessClient(serverUrl, state, authToken, ws, color, game);
     }
 
     public State getState(){
@@ -50,9 +57,14 @@ public class Repl  implements NotificationHandler{
                     result = postloginClient.eval(line,state,authToken);
                     state = postloginClient.getState();
                     System.out.print( result);
+                    if ( ws != null){
+                        this.ws = postloginClient.getWs();
+                        this.color = postloginClient.getColor();
+                        this.chessClient = new ChessClient(serverUrl, state, authToken, ws,color, game);
+                    }
                 }
                 else{
-                    result = chessClient.eval(line,state, authToken);
+                    result = chessClient.eval(line,state, authToken, color, game);
                     state = chessClient.getState();
                     System.out.print(result);
                 }

@@ -13,9 +13,13 @@ public class PostloginClient {
     private State state;
     private String authToken = "";
     private int countID = 0;
+    private NotificationHandler notificationHandler;
+    private WebSocketFacade ws;
+    private String color;
 
 
-    public PostloginClient(String serverUrl, State state, String authToken){
+    public PostloginClient(String serverUrl, State state, String authToken) throws ResponseException {
+        this.ws = new WebSocketFacade(serverUrl,notificationHandler);
         this.server = new ServerFacade(serverUrl);
         this.serverUrl = serverUrl;
         this.state = state;
@@ -43,6 +47,9 @@ public class PostloginClient {
 
     }
 
+    public WebSocketFacade getWs() {
+        return ws;
+    }
 
     private boolean isInteger(String str) {
         try {
@@ -81,8 +88,12 @@ public class PostloginClient {
                     data = result.games().get(id);
                 }
                 String color = "WHITE";
+                this.color = color;
                 DrawChessBoard.draw(new ChessGame(),null,color);
                 state = state.INGAME;
+                ws = new WebSocketFacade(serverUrl, notificationHandler);
+                Integer boxedId = data.gameID();
+                ws.join(authToken,boxedId);
                 return String.format("\nYou are observing the game: %s.", data.gameName());
             }
         }
@@ -109,7 +120,7 @@ public class PostloginClient {
                 } else{
                     data = result.games().get(id);
                 }
-
+                this.color = color;
 
                 JoinGameRequest request2 = new JoinGameRequest(authToken, color, data.gameID());
                 server.joinGame(request2, authToken);
@@ -117,13 +128,21 @@ public class PostloginClient {
                 if(exception == true){
                     return "";
                 }
+
                 state = state.INGAME;
                 DrawChessBoard.draw(new ChessGame(),null,color);
+                ws = new WebSocketFacade(serverUrl, notificationHandler);
+                Integer boxedId = data.gameID();
+                ws.join(authToken,boxedId);
                 return String.format("\nYou joined game as %s.",color);
             }
         }
             throw new ResponseException(415, "\"Incorrect syntax for join, dummy.\"");
 
+    }
+
+    public String getColor() {
+        return color;
     }
 
     public String create(String...params) throws ResponseException {

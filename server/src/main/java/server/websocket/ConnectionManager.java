@@ -85,7 +85,7 @@ public class ConnectionManager {
                 if(connection.session.isOpen() && Objects.equals(game, gameId)){
                     connection.send(new Gson().toJson(notification));
                     System.out.println(new Gson().toJson(notification));
-                }else{
+                }else if (!connection.session.isOpen()){
                     removeList.add(connection);
                 }
             }
