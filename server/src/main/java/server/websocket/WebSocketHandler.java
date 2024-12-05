@@ -2,6 +2,7 @@ package server.websocket;
 
 import chess.ChessGame;
 import chess.ChessMove;
+import chess.ChessPosition;
 import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import dataaccess.*;
@@ -25,6 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @WebSocket
 public class WebSocketHandler {
     private final ConnectionManager connectionManager = new ConnectionManager();
+    private final Map<Integer, Boolean> stops = new ConcurrentHashMap<>();
 
     private final AuthDataAccess authAccess;
     private final UserDataAccess userAccess;
@@ -43,8 +45,16 @@ public class WebSocketHandler {
         this.gameService = gameService;
         this.clearAccess = clearAccess;
         this.clearService = clearService;
-
     }
+
+
+
+
+    // Get the value or default to false
+    public boolean getStopStatus(Integer key) {
+        return stops.getOrDefault(key, false);
+    }
+
 
 
 
@@ -55,6 +65,7 @@ public class WebSocketHandler {
             Gson serializer = new Gson();
             UserGameCommand command = serializer.fromJson(message, UserGameCommand.class);
             AuthData data = authAccess.getAuth(command.getAuthToken());
+
             if (data == null){
                 throw new DataAccessException("Unauthorized access: Invalid auth token");
             } else {
@@ -77,17 +88,17 @@ public class WebSocketHandler {
 
     public void sendError(Exception ex, Session session) throws IOException {
         Gson serializer = new Gson();
-        ErrorResponse errorResponse = new ErrorResponse(ex.getMessage());
-        String jsonResponse = serializer.toJson(errorResponse);
+        ServerMessage.ErrorMessage error = new ServerMessage.ErrorMessage(ex.getMessage());
+        System.out.println(ex.getMessage());
+        String jsonResponse = serializer.toJson(error);
         session.getRemote().sendString(jsonResponse);
     }
 
-    public void send(GameData data, Session session, String message, String username,
+    public void sendNotification(GameData data, Session session, String message, String username,
                      ConnectionManager connectionManager) throws IOException {
         var notification = new ServerMessage.notificationMessage(message);
-        ServerMessage.LoadGameMessage game = new ServerMessage.LoadGameMessage(data.game());
-        session.getRemote().sendString(new Gson().toJson(game));
         connectionManager.broadcast(username, notification);
+
     }
 
 
@@ -107,7 +118,11 @@ public class WebSocketHandler {
                    } else {
                        message = String.format("%s is in the game as observer", username);
                    }
-                   send(data,session,message,username,connectionManager);
+                   sendNotification(data,session,message,username,connectionManager);
+                   ServerMessage.LoadGameMessage game = new ServerMessage.LoadGameMessage(data.game());
+                   String jsonString = new Gson().toJson(game);
+                   System.out.println(jsonString);
+                   session.getRemote().sendString(jsonString);
 
 
                } else {
@@ -134,36 +149,45 @@ public class WebSocketHandler {
 
             if (connectionManager != null) {
                 GameData data = gameAccess.getGame2(gameId);
-                if (connectionManager.isStopGame()) {
+                if (getStopStatus(gameId)) {
                     String stopMessage = "The game is stopped.";
-                    send(data, session, stopMessage, username, connectionManager); // Sending the stop message
+                    sendNotification(data, session, stopMessage, username, connectionManager); // Sending the stop message
                     return; // Exit early since the game is stopped
                 }
 
                 if (data != null) {
-                    if (data.whiteUsername().equals(username)) {
+                    if (data.whiteUsername().equals(username) || data.blackUsername().equals(username)) {
                         ChessGame game = data.game();
-                        game.makeMove(move.getMove());
                         ChessGame.TeamColor color = game.getTeamTurn();
+                        if (data.blackUsername().equals(username) && !color.equals(ChessGame.TeamColor.BLACK)){
+                            throw new DataAccessException("The chess piece belongs to white player");
+                        }
+                        if (data.whiteUsername().equals(username) && !color.equals(ChessGame.TeamColor.WHITE)){
+                            throw new DataAccessException("The chess piece belongs to black player");
+                        }
+                        color = game.getTeamTurn();
+                        game.makeMove(move.getMove());
                         gameAccess.updateGame2(gameId,game);
                         String message2 = "";
                         if (game.isInCheckmate(color)){
-                            String stopMessage = String.format("%s player is in the the checkmate the game is stopped", color.toString());
-                            send(data, session, stopMessage, username, connectionManager);// Sending the stop message
-                            connectionManager.stopGame();
-                            return;
+                            message2 = String.format("%s player is in the the checkmate, the game is stopped", color.toString());
+                            stops.put(gameId,true);
                         } else if(game.isInCheck(color)){
                             message2 = String.format("%s player's king is in the the check", color.toString());
                         } else if(game.isInStalemate(color)){
                             message2 = String.format(" the game is in stalemate");
+                            stops.put(gameId, true);
                         } else{
-                            message2 = String.format("%s player is in the the checkmate", color.toString());
+                            message2 = String.format("%s player moved piece at %s to %s", color.toString().toLowerCase(),
+                                    move.getMove().getStartPosition().toString(),move.getMove().getEndPosition().toString());
                         }
-                        send(data,session,message2,username,connectionManager);
+                        sendNotification(data,session,message2,username,connectionManager);
+                        ServerMessage.LoadGameMessage game2 = new ServerMessage.LoadGameMessage(game);
+                        connectionManager.sendAll(game2);
 
 
 
-                    } else {throw new DataAccessException("The game was not found");}
+                    } else {throw new DataAccessException("Only players can move the chess pieces");}
                 }
             } else{throw new DataAccessException("The connection was not found");}
 
@@ -196,15 +220,25 @@ public class WebSocketHandler {
     }
     void resign(Session session, String username, Integer gameId) throws IOException {
         try{
+            GameData data = gameAccess.getGame2(gameId);
+            if(getStopStatus(gameId)){
+                throw new DataAccessException("One of the player already resigned from the game");
+            }
 
             if (connectionManager != null) {
-                connectionManager.stopGame();
-                var message = String.format("%s resigned from the game", username);
-                var notification = new ServerMessage.notificationMessage(message);
-                connectionManager.broadcast(username, notification);
-            }
+                if (data != null) {
+                    if (data.whiteUsername().equals(username) || data.blackUsername().equals(username)) {
+                        stops.put(gameId, true);
+                        var message = String.format("%s resigned from the game", username);
+                        var notification = new ServerMessage.notificationMessage(message);
+                        connectionManager.broadcast(username, notification);
+                    }else {throw new DataAccessException("Only players can move the chess pieces");}
+                }
+            }else{throw new DataAccessException("The game was not found");}
         } catch (IOException ex) {
             ex.printStackTrace();
+            sendError(ex, session);
+        } catch (DataAccessException ex) {
             sendError(ex, session);
         }
     }

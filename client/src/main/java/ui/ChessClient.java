@@ -1,5 +1,7 @@
 package ui;
 
+import chess.ChessGame;
+
 import java.util.Arrays;
 
 public class ChessClient {
@@ -9,6 +11,7 @@ public class ChessClient {
     private State state;
     private String authToken = "";
     private int countID = 0;
+    private ChessGame game;
 
 
     public ChessClient(String serverUrl, State state, String authToken){
@@ -25,10 +28,40 @@ public class ChessClient {
         var cmd = (tokens.length > 0) ? tokens[0] : "help";
         var params = Arrays.copyOfRange(tokens, 1, tokens.length);
         return switch (cmd) {
-
+            case"redraw" -> redraw(params);
+            case"help" -> help();
+            case "make move" ->  makeMove(params);
+            case "leave" -> leave(params);
+            case"resign" -> resign(params);
+            case"highlight" -> hightlight(params);
             default -> help();
         };
 
+    }
+
+    private String hightlight(String[] params) {
+        String result = "";
+        return result;
+    }
+
+    private String redraw(String[] params) {
+        String result = "";
+        return result;
+    }
+
+    private String resign(String[] params) {
+        String result = "";
+        return result;
+    }
+
+    private String leave(String[] params) {
+        String result = "";
+        return result;
+    }
+
+    private String makeMove(String[] params) {
+        String result = "";
+        return result;
     }
 
     public State getState() {

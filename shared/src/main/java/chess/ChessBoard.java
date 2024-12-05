@@ -15,6 +15,8 @@ public class ChessBoard {
 
     }
 
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -63,6 +65,8 @@ public class ChessBoard {
     public ChessPiece getPiece(ChessPosition position) {
         return squares[position.getRow()-1][position.getColumn()-1];
     }
+
+
 
     /**
      * Sets the board to the default starting board

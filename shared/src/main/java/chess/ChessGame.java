@@ -131,6 +131,7 @@ public class ChessGame {
         if(board.getPiece(move.getStartPosition()) == null){
             throw new InvalidMoveException();
         }
+        TeamColor color = board.getPiece(move.getStartPosition()).getTeamColor();
         if (validMoves.contains(move) && board.getPiece(move.getStartPosition()).getTeamColor() == teamTurn) {
 
             if (move.getPromotionPiece() != null) {

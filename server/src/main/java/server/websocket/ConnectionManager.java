@@ -13,11 +13,29 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class ConnectionManager {
 
     private final Map<Integer, List<Connection>> connections = new ConcurrentHashMap<>();
-    public boolean stopGame = false;
+
     public void add(String name, Session session, Integer gameId) {
         var connection = new Connection(name, session);
-        connections.computeIfAbsent(gameId, k -> new CopyOnWriteArrayList<>()).add(connection);
+
+        // Ensure the gameId exists in the map
+        connections.putIfAbsent(gameId, new CopyOnWriteArrayList<>());
+
+        // Iterate through the list and check for duplicates
+        var connectionsList = connections.get(gameId);
+        boolean exists = false;
+        for (Connection conn : connectionsList) {
+            if (conn.getName().equals(name)) {
+                exists = true;
+                break;
+            }
+        }
+
+        // Add only if the connection doesn't already exist
+        if (!exists) {
+            connectionsList.add(connection);
+        }
     }
+
 
     public void remove(String visitorName, Integer gameId) {
         // Retrieve the list of connections for the specified gameId
@@ -35,19 +53,6 @@ public class ConnectionManager {
     }
 
 
-    public boolean isStopGame() {
-        return stopGame;
-    }
-
-    public void stopGame(){
-        stopGame = true;
-    }
-
-    public boolean hasSession(String username) {
-        return connections.containsKey(username); // Replace `sessions` with your actual data structure
-    }
-
-
     public void broadcast(String excludeVisitorName, ServerMessage notification) throws IOException {
         var removeList = new ArrayList<Connection>();
         for (Map.Entry<Integer, List<Connection>> entry : connections.entrySet()) {
@@ -57,16 +62,35 @@ public class ConnectionManager {
                 if(connection.session.isOpen()){
                     if(!connection.getName().equals(excludeVisitorName)){
                         connection.send(new Gson().toJson(notification));
+                        System.out.println(new Gson().toJson(notification));
                     }
                 }else{
                     removeList.add(connection);
                 }
             }
             for (var connection : removeList){
-                connections.remove(connection.getName(), gameId);
+                remove(connection.getName(), gameId);
             }
+        }
+    }
 
 
+    public void sendAll( ServerMessage notification) throws IOException {
+        var removeList = new ArrayList<Connection>();
+        for (Map.Entry<Integer, List<Connection>> entry : connections.entrySet()) {
+            Integer gameId = entry.getKey(); // This is the key (gameId)
+            List<Connection> connectionList = entry.getValue();// This is the value (List<Connection>)
+            for (Connection connection : connectionList){
+                if(connection.session.isOpen()){
+                    connection.send(new Gson().toJson(notification));
+                    System.out.println(new Gson().toJson(notification));
+                }else{
+                    removeList.add(connection);
+                }
+            }
+            for (var connection : removeList){
+                remove(connection.getName(), gameId);
+            }
         }
     }
 }
