@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -53,14 +54,14 @@ public class ConnectionManager {
     }
 
 
-    public void broadcast(String excludeVisitorName, ServerMessage notification) throws IOException {
+    public void broadcast(String excludeVisitorName, ServerMessage notification, Integer game) throws IOException {
         var removeList = new ArrayList<Connection>();
         for (Map.Entry<Integer, List<Connection>> entry : connections.entrySet()) {
             Integer gameId = entry.getKey(); // This is the key (gameId)
             List<Connection> connectionList = entry.getValue();// This is the value (List<Connection>)
             for (Connection connection : connectionList){
                 if(connection.session.isOpen()){
-                    if(!connection.getName().equals(excludeVisitorName)){
+                    if(!connection.getName().equals(excludeVisitorName) && Objects.equals(game, gameId)){
                         connection.send(new Gson().toJson(notification));
                         System.out.println(new Gson().toJson(notification));
                     }
@@ -75,13 +76,13 @@ public class ConnectionManager {
     }
 
 
-    public void sendAll( ServerMessage notification) throws IOException {
+    public void sendAll( ServerMessage notification, Integer game) throws IOException {
         var removeList = new ArrayList<Connection>();
         for (Map.Entry<Integer, List<Connection>> entry : connections.entrySet()) {
             Integer gameId = entry.getKey(); // This is the key (gameId)
             List<Connection> connectionList = entry.getValue();// This is the value (List<Connection>)
             for (Connection connection : connectionList){
-                if(connection.session.isOpen()){
+                if(connection.session.isOpen() && Objects.equals(game, gameId)){
                     connection.send(new Gson().toJson(notification));
                     System.out.println(new Gson().toJson(notification));
                 }else{

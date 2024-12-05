@@ -1,12 +1,11 @@
 package ui;
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessPiece;
+import chess.*;
 import com.google.gson.Gson;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import static ui.EscapeSequences.*;
@@ -14,22 +13,14 @@ import static ui.EscapeSequences.*;
 public class DrawChessBoard {
     private final String color;
 
-    private static String[] Row1 ={};
-            //{BLACK_ROOK, BLACK_KNIGHT,
-            //BLACK_BISHOP,BLACK_KING,BLACK_QUEEN, BLACK_BISHOP, BLACK_KNIGHT, BLACK_ROOK};
+    private static final List<String> Row1 = new ArrayList<>();
     private static final List<String> Row2 = new ArrayList<>();
-//                    {BLACK_ROOK, BLACK_KNIGHT,
-//            BLACK_BISHOP,BLACK_QUEEN, BLACK_KING, BLACK_BISHOP, BLACK_KNIGHT, BLACK_ROOK};
-    private static final String[] Row3 = {BLACK_PAWN, BLACK_PAWN,
-            BLACK_PAWN, BLACK_PAWN, BLACK_PAWN, BLACK_PAWN, BLACK_PAWN, BLACK_PAWN};
-    private static final String[] Row4 = {WHITE_PAWN, WHITE_PAWN,
-            WHITE_PAWN, WHITE_PAWN, WHITE_PAWN, WHITE_PAWN, WHITE_PAWN, WHITE_PAWN};
-    private static final String[] Row5 = {WHITE_ROOK, WHITE_KNIGHT,
-            WHITE_BISHOP, WHITE_KING,WHITE_QUEEN, WHITE_BISHOP, WHITE_KNIGHT, WHITE_ROOK};
-    private static final String[] Row6 = {WHITE_ROOK, WHITE_KNIGHT,
-            WHITE_BISHOP,WHITE_QUEEN, WHITE_KING, WHITE_BISHOP, WHITE_KNIGHT, WHITE_ROOK};
-    private static final String[] Row7 = {EMPTY, EMPTY,
-            EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY};
+    private static final List<String> Row3 = new ArrayList<>();
+    private static final List<String> Row4 = new ArrayList<>();
+    private static final List<String> Row5 = new ArrayList<>();
+    private static final List<String> Row6 = new ArrayList<>();
+    private static final List<String> Row7 = new ArrayList<>();
+    private static final List<String> Row8 = new ArrayList<>();
 
     private static final String SPACE = " ";
 
@@ -39,18 +30,11 @@ public class DrawChessBoard {
 
     public static void printCurrentBoard(ChessBoard board) {
         var squares = board.getSquares();
-        List<String> Row1 = new ArrayList<>();
-        List<String> Row3 = new ArrayList<>();
-        List<String> Row4 = new ArrayList<>();
-        List<String> Row5 = new ArrayList<>();
-        List<String> Row6 = new ArrayList<>();
-        List<String> Row7 = new ArrayList<>();
         for (int row = 0; row < squares.length; row++) {
             for (int col = 0; col < squares[row].length; col++) {
                 ChessPiece piece = squares[row][col];
+                String piece2 = EMPTY;
                 if (piece != null) {
-                    System.out.print(piece.getTeamColor() + " " + piece.getPieceType() + "\t");
-                    String piece2 = EMPTY;
                     if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
                         switch (piece.getPieceType()) {
                             case BISHOP: {
@@ -94,7 +78,7 @@ public class DrawChessBoard {
                                 break;
                             }
                             case QUEEN: {
-                                piece2 = BLACK_KING;
+                                piece2 = BLACK_QUEEN;
                                 break;
                             }
                             case ROOK: {
@@ -107,6 +91,9 @@ public class DrawChessBoard {
                             }
                         }
                     }
+                }else{
+                    piece2 = EMPTY;
+                }
                     switch (row){
                         case 0:{
                             Row1.add(piece2);
@@ -132,13 +119,13 @@ public class DrawChessBoard {
                         }case 6:{
                             Row7.add(piece2);
                             break;
+                        } case 7:{
+                            Row8.add(piece2);
                         }
 
 
                     }
-                } else {
-                    System.out.print("EMPTY\t");
-                }
+
             }
             System.out.println();
         }
@@ -148,22 +135,23 @@ public class DrawChessBoard {
 
 
 
-    public static void main(String [] args) {
-        ChessGame game = new ChessGame();
+    public static void draw(ChessGame game, ChessPosition position, String color) {
         ChessBoard board2 = game.getBoard();
-        System.out.println(new Gson().toJson(board2));
+        Collection<ChessMove> moves = null;
+        if (position !=null) {
+            moves = game.validMoves(position);
+        }
         printCurrentBoard(board2);
-        String color = "white";
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         out.print(ERASE_SCREEN);
         drawHeader(out, color);
         out.println();
         if (color.equalsIgnoreCase("BLACK")) {
             String[][] board = drawBoardFromBlack(out);
-            drawBoard(out,board,color, Row2);
+            drawBoard(out,board,color, Row2, moves);
         } else if(color.equalsIgnoreCase("WHITE")) {
             String[][] board = drawBoardFromWhite(out);
-            drawBoard(out,board,color, Row2);
+            drawBoard(out,board,color, Row2, moves);
         }
         drawHeader(out, color);
     }
@@ -186,36 +174,53 @@ public class DrawChessBoard {
     }
 
     static String[][] drawBoardFromBlack(PrintStream out) {
+        String[] row1Array = Row1.toArray(new String[0]);
+        String[] row2Array = Row2.toArray(new String[0]);
+        String[] row3Array = Row3.toArray(new String[0]);
+        String[] row4Array = Row4.toArray(new String[0]);
+        String[] row5Array = Row5.toArray(new String[0]);
+        String[] row6Array = Row6.toArray(new String[0]);
+        String[] row7Array = Row7.toArray(new String[0]);
+        String[] row8Array = Row8.toArray(new String[0]);
         String[][] board = {
-                Row1,
-                Row3,
-                Row7,
-                Row7,
-                Row7,
-                Row7,
-                Row4,
-                Row5
+                row8Array,
+                row7Array,
+                row6Array,
+                row5Array,
+                row4Array,
+                row3Array,
+                row2Array,
+                row1Array
+
+
         };
         out.print(SET_TEXT_COLOR_BLUE);
         return board;
     }
 
     static String[][] drawBoardFromWhite(PrintStream out) {
+        String[] row1Array = Row1.toArray(new String[0]);
         String[] row2Array = Row2.toArray(new String[0]);
+        String[] row3Array = Row3.toArray(new String[0]);
+        String[] row4Array = Row4.toArray(new String[0]);
+        String[] row5Array = Row5.toArray(new String[0]);
+        String[] row6Array = Row6.toArray(new String[0]);
+        String[] row7Array = Row7.toArray(new String[0]);
+        String[] row8Array = Row8.toArray(new String[0]);
         String[][] board = {
-                Row6,
-                Row4,
-                Row7,
-                Row7,
-                Row7,
-                Row7,
-                Row3,
-                row2Array
+                row1Array,
+                row2Array,
+                row3Array,
+                row4Array,
+                row5Array,
+                row6Array,
+                row7Array,
+                row8Array
         };
         return board;
     }
 
-    static void drawBoard(PrintStream out, String[][] board, String color, List<String> row2) {
+    static void drawBoard(PrintStream out, String[][] board, String color, List<String> row2, Collection<ChessMove> moves) {
         boolean isDarkSquare;
         for (int row = 0; row < board.length; row++) {
             out.print(SET_BG_COLOR_DARK_GREEN);
@@ -228,11 +233,39 @@ public class DrawChessBoard {
             isDarkSquare = row % 2 == 0;
 
             for (int col = 0; col < board[row].length; col++) {
-                if (isDarkSquare) {
-                    out.print(SET_BG_COLOR_LIGHT_GREY);
-                } else {
-                    out.print(SET_BG_COLOR_DARK_GREY);
+                if (moves != null){
+                    boolean possibleMove = false;
+                    for (ChessMove move : moves){
+                        ChessPosition startPosition = move.getStartPosition();
+                        int row3 = 9 -startPosition.getRow()-1;
+                        int col3 = startPosition.getColumn()-1;
+
+                        if (row == row3 && col == startPosition.getColumn()-1){
+                            out.print(SET_BG_COLOR_MAGENTA);
+                            possibleMove = true;
+                        }
+                        ChessPosition endPosition = move.getEndPosition();
+                        int row4 = 9 - endPosition.getRow()-1;
+                        int col4 =  endPosition.getColumn()-1;
+                        if (row == row4 && col == col4){
+                            out.print(SET_BG_COLOR_MAGENTA);
+                            possibleMove = true;
+                        }
+                    } if(!possibleMove){
+                        if (isDarkSquare) {
+                            out.print(SET_BG_COLOR_LIGHT_GREY);
+                        } else {
+                            out.print(SET_BG_COLOR_DARK_GREY);
+                        }
+                    }
+                }else{
+                    if (isDarkSquare) {
+                        out.print(SET_BG_COLOR_LIGHT_GREY);
+                    } else {
+                        out.print(SET_BG_COLOR_DARK_GREY);
+                    }
                 }
+
                 out.print(SET_TEXT_COLOR_BLUE);
                 out.print(board[row][col]);
                 isDarkSquare = !isDarkSquare;

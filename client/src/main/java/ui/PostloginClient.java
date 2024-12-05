@@ -1,5 +1,6 @@
 package ui;
 
+import chess.ChessGame;
 import objects.*;
 import model.GameData;
 
@@ -80,7 +81,7 @@ public class PostloginClient {
                     data = result.games().get(id);
                 }
                 String color = "WHITE";
-                //DrawChessBoard.draw(color);
+                DrawChessBoard.draw(new ChessGame(),null,color);
                 state = state.INGAME;
                 return String.format("\nYou are observing the game: %s.", data.gameName());
             }
@@ -117,7 +118,7 @@ public class PostloginClient {
                     return "";
                 }
                 state = state.INGAME;
-                //DrawChessBoard.draw(color);
+                DrawChessBoard.draw(new ChessGame(),null,color);
                 return String.format("\nYou joined game as %s.",color);
             }
         }

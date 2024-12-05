@@ -1,11 +1,9 @@
 package dataaccess;
 
 import chess.ChessGame;
-import chess.ChessMove;
 import com.google.gson.Gson;
 import model.GameData;
 import objects.OccupiedException;
-import websocket.commands.UserGameCommand;
 
 
 import java.sql.ResultSet;
@@ -139,6 +137,22 @@ public class MySqlGameDAO implements GameDataAccess {
             executeUpdate(statement, username, gameID);
         } else {
             throw new OccupiedException("Game is already full");
+        }
+    }
+
+    @Override
+    public void deletePlayer(String color, int gameId,
+                             String username) throws DataAccessException, OccupiedException {
+        GameData data = getGame2(gameId);
+        if (color.equalsIgnoreCase( "WHITE") && data.whiteUsername().equals(username)) {
+            String statement = "UPDATE game SET whiteUsername = ? WHERE gameId = ?";
+
+            executeUpdate(statement, null, gameId);
+        } else if (color.equalsIgnoreCase("BLACK") && data.blackUsername().equals(username)) {
+            String statement = "UPDATE game SET blackUsername = ? WHERE gameId = ?";
+            executeUpdate(statement, null, gameId);
+        } else {
+            throw new OccupiedException("There is no such player");
         }
     }
 

@@ -95,6 +95,8 @@ public class MemoryGameDAO implements GameDataAccess{
     public void updateGame2(int gameID, ChessGame game) {
 
     }
+    @Override
+    public void deletePlayer(String color, int gameId, String username){}
 
     @Override
     public void clear() {

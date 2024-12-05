@@ -9,6 +9,7 @@ import dataaccess.*;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
+import objects.OccupiedException;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
@@ -101,9 +102,9 @@ public class WebSocketHandler {
     }
 
     public void sendNotification(GameData data, Session session, String message, String username,
-                     ConnectionManager connectionManager) throws IOException {
+                     ConnectionManager connectionManager, Integer gameId) throws IOException {
         var notification = new ServerMessage.notificationMessage(message);
-        connectionManager.broadcast(username, notification);
+        connectionManager.broadcast(username, notification,gameId);
 
     }
 
@@ -129,7 +130,7 @@ public class WebSocketHandler {
                    if(!session.isOpen()){
                        System.out.println("session is not open");
                    }
-                   sendNotification(data,session,message,username,connectionManager);
+                   sendNotification(data,session,message,username,connectionManager, gameId);
                    if(!session.isOpen()){
                        System.out.println("session is not open");
                    }
@@ -137,6 +138,7 @@ public class WebSocketHandler {
                    String jsonString = new Gson().toJson(game);
                    System.out.println(jsonString);
                    session.getRemote().sendString(jsonString);
+                   stops.put(gameId,false);
 
 
                } else {
@@ -165,12 +167,12 @@ public class WebSocketHandler {
                 GameData data = gameAccess.getGame2(gameId);
                 if (getStopStatus(gameId)) {
                     String stopMessage = "The game is stopped.";
-                    sendNotification(data, session, stopMessage, username, connectionManager); // Sending the stop message
-                    return; // Exit early since the game is stopped
+                    throw new DataAccessException("The game is stopped2");
                 }
 
                 if (data != null) {
                     if (data.whiteUsername().equals(username) || data.blackUsername().equals(username)) {
+
                         ChessGame game = data.game();
                         ChessGame.TeamColor color = game.getTeamTurn();
                         if (data.blackUsername().equals(username) && !color.equals(ChessGame.TeamColor.BLACK)){
@@ -195,9 +197,9 @@ public class WebSocketHandler {
                             message2 = String.format("%s player moved piece at %s to %s", color.toString().toLowerCase(),
                                     move.getMove().getStartPosition().toString(),move.getMove().getEndPosition().toString());
                         }
-                        sendNotification(data,session,message2,username,connectionManager);
+                        sendNotification(data,session,message2,username,connectionManager, gameId);
                         ServerMessage.LoadGameMessage game2 = new ServerMessage.LoadGameMessage(game);
-                        connectionManager.sendAll(game2);
+                        connectionManager.sendAll(game2, gameId);
 
 
 
@@ -222,7 +224,16 @@ public class WebSocketHandler {
                session.close();
                var message = String.format("%s left the the game", username);
                var notification = new ServerMessage.notificationMessage(message);
-               connectionManager.broadcast(username, notification);
+               connectionManager.broadcast(username, notification, gameId);
+               GameData data = gameAccess.getGame2(gameId);
+               if (data.blackUsername().equals(username) &&
+                       !data.game().getTeamTurn().equals(ChessGame.TeamColor.BLACK)){
+                   gameAccess.deletePlayer(data.game().getTeamTurn().toString(),gameId,username);
+               }
+               if (data.whiteUsername().equals(username) &&
+                       !!data.game().getTeamTurn().equals(ChessGame.TeamColor.WHITE)){
+                   gameAccess.deletePlayer(data.game().getTeamTurn().toString(),gameId,username);
+               }
            }else{
                throw new DataAccessException("The game was not found");
            }
@@ -230,6 +241,8 @@ public class WebSocketHandler {
            ex.printStackTrace();
            sendError(ex, session);
        } catch (DataAccessException ex) {
+           sendError(ex, session);
+       } catch (OccupiedException ex) {
            sendError(ex, session);
        }
     }
@@ -246,7 +259,7 @@ public class WebSocketHandler {
                         stops.put(gameId, true);
                         var message = String.format("%s resigned from the game", username);
                         var notification = new ServerMessage.notificationMessage(message);
-                        connectionManager.broadcast(username, notification);
+                        connectionManager.sendAll( notification, gameId);
                     }else {throw new DataAccessException("Only players can move the chess pieces");}
                 }
             }else{throw new DataAccessException("The game was not found");}
