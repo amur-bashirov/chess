@@ -57,16 +57,22 @@ public class Repl  implements NotificationHandler{
                     result = postloginClient.eval(line,state,authToken);
                     state = postloginClient.getState();
                     System.out.print( result);
+                    this.ws = postloginClient.getWs();
                     if ( ws != null){
+                        this.game = postloginClient.getGame();
                         this.ws = postloginClient.getWs();
                         this.color = postloginClient.getColor();
                         this.chessClient = new ChessClient(serverUrl, state, authToken, ws,color, game);
                     }
                 }
                 else{
-                    result = chessClient.eval(line,state, authToken, color, game);
-                    state = chessClient.getState();
-                    System.out.print(result);
+                    try {
+                        result = chessClient.eval(line, state, authToken, color, game);
+                        state = chessClient.getState();
+                        System.out.print(result);
+                    } catch (ResponseException ex){
+                        System.out.println(ex.getMessage());
+                    }
                 }
             } catch (Throwable e) {
                 var msg = e.toString();

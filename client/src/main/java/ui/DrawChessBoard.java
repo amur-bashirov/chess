@@ -13,14 +13,14 @@ import static ui.EscapeSequences.*;
 public class DrawChessBoard {
     private final String color;
 
-    private static final List<String> Row1 = new ArrayList<>();
-    private static final List<String> Row2 = new ArrayList<>();
-    private static final List<String> Row3 = new ArrayList<>();
-    private static final List<String> Row4 = new ArrayList<>();
-    private static final List<String> Row5 = new ArrayList<>();
-    private static final List<String> Row6 = new ArrayList<>();
-    private static final List<String> Row7 = new ArrayList<>();
-    private static final List<String> Row8 = new ArrayList<>();
+    private static  List<String> Row1 = new ArrayList<>();
+    private static  List<String> Row2 = new ArrayList<>();
+    private static List<String> Row3 = new ArrayList<>();
+    private static List<String> Row4 = new ArrayList<>();
+    private static List<String> Row5 = new ArrayList<>();
+    private static List<String> Row6 = new ArrayList<>();
+    private static List<String> Row7 = new ArrayList<>();
+    private static List<String> Row8 = new ArrayList<>();
 
     private static final String SPACE = " ";
 
@@ -154,6 +154,14 @@ public class DrawChessBoard {
             drawBoard(out,board,color, Row2, moves);
         }
         drawHeader(out, color);
+        Row1 = new ArrayList<>();
+         Row2 = new ArrayList<>();
+         Row3 = new ArrayList<>();
+         Row4 = new ArrayList<>();
+         Row5 = new ArrayList<>();
+        Row6 = new ArrayList<>();
+        Row7 = new ArrayList<>();
+        Row8 = new ArrayList<>();
     }
     static void drawHeader(PrintStream out,String color) {
         out.print(SET_BG_COLOR_DARK_GREEN);
@@ -237,7 +245,12 @@ public class DrawChessBoard {
                     boolean possibleMove = false;
                     for (ChessMove move : moves){
                         ChessPosition startPosition = move.getStartPosition();
-                        int row3 = 9 -startPosition.getRow()-1;
+                        int row3 = 0;
+                        if(color.equalsIgnoreCase("WHITE")) {
+                             row3 = 9 - startPosition.getRow() - 1;
+                        } else{
+                            row3 = startPosition.getRow() -1;
+                        }
                         int col3 = startPosition.getColumn()-1;
 
                         if (row == row3 && col == startPosition.getColumn()-1){
@@ -245,7 +258,12 @@ public class DrawChessBoard {
                             possibleMove = true;
                         }
                         ChessPosition endPosition = move.getEndPosition();
-                        int row4 = 9 - endPosition.getRow()-1;
+                        int row4 = 0;
+                        if(color.equalsIgnoreCase("WHITE")) {
+                             row4 = 9 - endPosition.getRow()-1;
+                        } else{
+                             row4 = endPosition.getRow()-1;
+                        }
                         int col4 =  endPosition.getColumn()-1;
                         if (row == row4 && col == col4){
                             out.print(SET_BG_COLOR_MAGENTA);

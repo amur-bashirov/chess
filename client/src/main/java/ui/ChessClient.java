@@ -35,7 +35,7 @@ public class ChessClient {
         this.color = color;
         this.authToken = authToken;
         this.state = state;
-        var tokens = input.toLowerCase().split("");
+        var tokens = input.toLowerCase().split(" ");
         var cmd = (tokens.length > 0) ? tokens[0] : "help";
         var params = Arrays.copyOfRange(tokens, 1, tokens.length);
         return switch (cmd) {
@@ -44,7 +44,7 @@ public class ChessClient {
             case "make move" ->  makeMove(params);
             case "leave" -> leave();
             case"resign" -> resign();
-            case"highlight" -> highlight();
+            case"highlight" -> highlight(params);
             default -> help();
         };
 
@@ -64,16 +64,17 @@ public class ChessClient {
     }
 
     private String highlight(String...params) throws ResponseException {
+        int length = params.length;
         if (params.length == 2) {
             if (isInteger(params[0]) && isInteger(params[1])){
                 int row = Integer.parseInt(params[0]);
-                int col = Integer.parseInt(params[0]);
+                int col = Integer.parseInt(params[1]);
                 if(row>0 && row <9 && col >0 && col <9){
                     ChessPosition position = new ChessPosition(row,col);
                     DrawChessBoard.draw(game,position,color);
-                    String result = "Here are the possible moves";
+                    String result = "\nHere are the possible moves";
                     return result;
-                }
+                } throw new ResponseException(415, "Integers are out of range of chess board");
             } throw new ResponseException(415,"Both must be integers");
         }throw new ResponseException(415,"There are no <ROW> <COLUMN>");
 
