@@ -159,7 +159,7 @@ public class WebSocketHandler {
             UserGameCommand.Move move = serializer.fromJson(message, UserGameCommand.Move.class);
 
 
-            if (connectionManager != null) {
+
                 GameData data = gameAccess.getGame2(gameId);
                 if (getStopStatus(gameId)) {
                     String stopMessage = "The game is stopped.";
@@ -205,7 +205,6 @@ public class WebSocketHandler {
 
                     } else {throw new DataAccessException("Only players can move the chess pieces");}
                 }
-            } else{throw new DataAccessException("The connection was not found");}
 
 
         } catch (DataAccessException ex){
