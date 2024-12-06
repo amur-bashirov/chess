@@ -28,6 +28,7 @@ public class WebSocketFacade extends Endpoint{
                     try {
                         ServerMessage notification =
                                 new Gson().fromJson(message, ServerMessage.class);
+                        notificationHandler.notify(notification);
 
                     }catch(Exception ex){
                         System.out.print(ex.getMessage());

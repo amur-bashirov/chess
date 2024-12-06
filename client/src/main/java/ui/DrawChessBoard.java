@@ -33,7 +33,7 @@ public class DrawChessBoard {
             for (int col = 0; col < squares[row].length; col++) {
                 ChessPiece piece = squares[row][col];
                 String piece2 = EMPTY;
-                if (piece != null) {
+               // if (piece != null) {
                     if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
                         switch (piece.getPieceType()) {
                             case BISHOP: {
@@ -83,7 +83,7 @@ public class DrawChessBoard {
                                 break;
                             }
                         }
-                    }
+                   // }
                 }else{
                     piece2 = EMPTY;
                 }
