@@ -1,14 +1,11 @@
 package server.websocket;
 
 import chess.ChessGame;
-import chess.ChessMove;
-import chess.ChessPosition;
 import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import dataaccess.*;
 import model.AuthData;
 import model.GameData;
-import model.UserData;
 import objects.OccupiedException;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
@@ -17,7 +14,6 @@ import service.ClearService;
 import service.GameService;
 import service.UserService;
 import websocket.commands.UserGameCommand;
-import spark.*;
 import websocket.messages.ServerMessage;
 
 import java.io.IOException;
@@ -103,7 +99,7 @@ public class WebSocketHandler {
 
     public void sendNotification(GameData data, Session session, String message, String username,
                      ConnectionManager connectionManager, Integer gameId) throws IOException {
-        var notification = new ServerMessage.notificationMessage(message);
+        var notification = new ServerMessage.NotificationMessage(message);
         connectionManager.broadcast(username, notification,gameId);
 
     }
@@ -227,14 +223,14 @@ public class WebSocketHandler {
                connectionManager.remove(username, gameId);
                session.close();
                var message = String.format("%s left the the game", username);
-               var notification = new ServerMessage.notificationMessage(message);
+               var notification = new ServerMessage.NotificationMessage(message);
                connectionManager.broadcast(username, notification, gameId);
                GameData data = gameAccess.getGame2(gameId);
-               if (data.blackUsername().equals(username) &&
+               if (username.equals(data.blackUsername()) &&
                        !data.game().getTeamTurn().equals(ChessGame.TeamColor.BLACK)){
                    gameAccess.deletePlayer(data.game().getTeamTurn().toString(),gameId,username);
                }
-               if (data.whiteUsername().equals(username) &&
+               if (username.equals(data.whiteUsername()) &&
                        !!data.game().getTeamTurn().equals(ChessGame.TeamColor.WHITE)){
                    gameAccess.deletePlayer(data.game().getTeamTurn().toString(),gameId,username);
                }
@@ -262,7 +258,7 @@ public class WebSocketHandler {
                     if (data.whiteUsername().equals(username) || data.blackUsername().equals(username)) {
                         stops.put(gameId, true);
                         var message = String.format("%s resigned from the game", username);
-                        var notification = new ServerMessage.notificationMessage(message);
+                        var notification = new ServerMessage.NotificationMessage(message);
                         connectionManager.sendAll( notification, gameId);
                     }else {throw new DataAccessException("Only players can move the chess pieces");}
                 }

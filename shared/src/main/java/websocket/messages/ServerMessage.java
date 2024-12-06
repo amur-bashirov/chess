@@ -1,7 +1,6 @@
 package websocket.messages;
 
 import chess.ChessGame;
-import com.google.gson.Gson;
 
 import java.util.Objects;
 
@@ -88,10 +87,10 @@ public class ServerMessage {
     }
 
 
-    public static class notificationMessage extends ServerMessage {
+    public static class NotificationMessage extends ServerMessage {
         private final String message;
 
-        public notificationMessage(String message) {
+        public NotificationMessage(String message) {
             super(ServerMessageType.NOTIFICATION);
             this.message = message;
         }

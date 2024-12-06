@@ -89,7 +89,7 @@ public class Repl  implements NotificationHandler{
         System.out.println(result);
         }
 
-    public void notify(ServerMessage notification){
+    public void notify(ServerMessage notification) throws ResponseException {
         //not sure what it is supposed to do
         String message = "";
         if(notification.getServerMessageType() == ServerMessage.ServerMessageType.ERROR)
@@ -99,13 +99,14 @@ public class Repl  implements NotificationHandler{
             printPrompt();
         } else if (notification.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME){
             ChessGame game = ((ServerMessage.LoadGameMessage)notification).getGame();
+            this.game = game;
             DrawChessBoard.draw(game,null,color);
             System.out.print("\n"  + ">>> " );
 
         } else{
-            message = ((ServerMessage.notificationMessage) notification).getMessage();
-            System.out.println(SET_TEXT_COLOR_RED + message);
-            printPrompt();
+            message = ((ServerMessage.NotificationMessage) notification).getMessage();
+            System.out.println(SET_TEXT_COLOR_RED);
+            throw new ResponseException(415,message);
         }
     }
 

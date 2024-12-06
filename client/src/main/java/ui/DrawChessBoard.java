@@ -1,6 +1,5 @@
 package ui;
 import chess.*;
-import com.google.gson.Gson;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
@@ -13,14 +12,14 @@ import static ui.EscapeSequences.*;
 public class DrawChessBoard {
     private final String color;
 
-    private static  List<String> Row1 = new ArrayList<>();
-    private static  List<String> Row2 = new ArrayList<>();
-    private static List<String> Row3 = new ArrayList<>();
-    private static List<String> Row4 = new ArrayList<>();
-    private static List<String> Row5 = new ArrayList<>();
-    private static List<String> Row6 = new ArrayList<>();
-    private static List<String> Row7 = new ArrayList<>();
-    private static List<String> Row8 = new ArrayList<>();
+    private static  List<String> row1 = new ArrayList<>();
+    private static  List<String> row2 = new ArrayList<>();
+    private static List<String> row3 = new ArrayList<>();
+    private static List<String> row4 = new ArrayList<>();
+    private static List<String> row5 = new ArrayList<>();
+    private static List<String> row6 = new ArrayList<>();
+    private static List<String> row7 = new ArrayList<>();
+    private static List<String> row8 = new ArrayList<>();
 
     private static final String SPACE = " ";
 
@@ -39,28 +38,22 @@ public class DrawChessBoard {
                         switch (piece.getPieceType()) {
                             case BISHOP: {
                                 piece2 = WHITE_BISHOP;
-                                break;
-                            }
+                                break;}
                             case PAWN: {
                                 piece2 = WHITE_PAWN;
-                                break;
-                            }
+                                break;}
                             case KING: {
                                 piece2 = WHITE_KING;
-                                break;
-                            }
+                                break;}
                             case QUEEN: {
                                 piece2 = WHITE_QUEEN;
-                                break;
-                            }
+                                break;}
                             case ROOK: {
                                 piece2 = WHITE_ROOK;
-                                break;
-                            }
+                                break;}
                             case KNIGHT: {
                                 piece2 = WHITE_KNIGHT;
-                                break;
-                            }
+                                break;}
                         }
                     }
                     if (piece.getTeamColor() == ChessGame.TeamColor.BLACK) {
@@ -96,36 +89,30 @@ public class DrawChessBoard {
                 }
                     switch (row){
                         case 0:{
-                            Row1.add(piece2);
-                            break;
-                        }
+                            row1.add(piece2);
+                            break;}
                         case 1:{
-                            Row2.add(piece2);
-                            break;
-                        }
+                            row2.add(piece2);
+                            break;}
                         case 2:{
-                            Row3.add(piece2);
+                            row3.add(piece2);
                             break;
                         }case 3:{
-                            Row4.add(piece2);
+                            row4.add(piece2);
                             break;
                         }case 4:{
-                            Row5.add(piece2);
+                            row5.add(piece2);
                             break;
                         }
                         case 5:{
-                            Row6.add(piece2);
+                            row6.add(piece2);
                             break;
                         }case 6:{
-                            Row7.add(piece2);
+                            row7.add(piece2);
                             break;
                         } case 7:{
-                            Row8.add(piece2);
-                        }
-
-
+                            row8.add(piece2);}
                     }
-
             }
             System.out.println();
         }
@@ -148,20 +135,20 @@ public class DrawChessBoard {
         out.println();
         if (color.equalsIgnoreCase("BLACK")) {
             String[][] board = drawBoardFromBlack(out);
-            drawBoard(out,board,color, Row2, moves);
+            drawBoard(out,board,color, row2, moves);
         } else if(color.equalsIgnoreCase("WHITE")) {
             String[][] board = drawBoardFromWhite(out);
-            drawBoard(out,board,color, Row2, moves);
+            drawBoard(out,board,color, row2, moves);
         }
         drawHeader(out, color);
-        Row1 = new ArrayList<>();
-         Row2 = new ArrayList<>();
-         Row3 = new ArrayList<>();
-         Row4 = new ArrayList<>();
-         Row5 = new ArrayList<>();
-        Row6 = new ArrayList<>();
-        Row7 = new ArrayList<>();
-        Row8 = new ArrayList<>();
+        row1 = new ArrayList<>();
+         row2 = new ArrayList<>();
+         row3 = new ArrayList<>();
+         row4 = new ArrayList<>();
+         row5 = new ArrayList<>();
+        row6 = new ArrayList<>();
+        row7 = new ArrayList<>();
+        row8 = new ArrayList<>();
     }
     static void drawHeader(PrintStream out,String color) {
         out.print(SET_BG_COLOR_DARK_GREEN);
@@ -182,39 +169,14 @@ public class DrawChessBoard {
     }
 
     static String[][] drawBoardFromBlack(PrintStream out) {
-        String[] row1Array = Row1.toArray(new String[0]);
-        String[] row2Array = Row2.toArray(new String[0]);
-        String[] row3Array = Row3.toArray(new String[0]);
-        String[] row4Array = Row4.toArray(new String[0]);
-        String[] row5Array = Row5.toArray(new String[0]);
-        String[] row6Array = Row6.toArray(new String[0]);
-        String[] row7Array = Row7.toArray(new String[0]);
-        String[] row8Array = Row8.toArray(new String[0]);
-        String[][] board = {
-                row8Array,
-                row7Array,
-                row6Array,
-                row5Array,
-                row4Array,
-                row3Array,
-                row2Array,
-                row1Array
-
-
-        };
-        out.print(SET_TEXT_COLOR_BLUE);
-        return board;
-    }
-
-    static String[][] drawBoardFromWhite(PrintStream out) {
-        String[] row1Array = Row1.toArray(new String[0]);
-        String[] row2Array = Row2.toArray(new String[0]);
-        String[] row3Array = Row3.toArray(new String[0]);
-        String[] row4Array = Row4.toArray(new String[0]);
-        String[] row5Array = Row5.toArray(new String[0]);
-        String[] row6Array = Row6.toArray(new String[0]);
-        String[] row7Array = Row7.toArray(new String[0]);
-        String[] row8Array = Row8.toArray(new String[0]);
+        String[] row1Array = row1.toArray(new String[0]);
+        String[] row2Array = row2.toArray(new String[0]);
+        String[] row3Array = row3.toArray(new String[0]);
+        String[] row4Array = row4.toArray(new String[0]);
+        String[] row5Array = row5.toArray(new String[0]);
+        String[] row6Array = row6.toArray(new String[0]);
+        String[] row7Array = row7.toArray(new String[0]);
+        String[] row8Array = row8.toArray(new String[0]);
         String[][] board = {
                 row1Array,
                 row2Array,
@@ -224,6 +186,31 @@ public class DrawChessBoard {
                 row6Array,
                 row7Array,
                 row8Array
+
+
+        };
+        out.print(SET_TEXT_COLOR_BLUE);
+        return board;
+    }
+
+    static String[][] drawBoardFromWhite(PrintStream out) {
+        String[] row1Array = row1.toArray(new String[0]);
+        String[] row2Array = row2.toArray(new String[0]);
+        String[] row3Array = row3.toArray(new String[0]);
+        String[] row4Array = row4.toArray(new String[0]);
+        String[] row5Array = row5.toArray(new String[0]);
+        String[] row6Array = row6.toArray(new String[0]);
+        String[] row7Array = row7.toArray(new String[0]);
+        String[] row8Array = row8.toArray(new String[0]);
+        String[][] board = {
+                row8Array,
+                row7Array,
+                row6Array,
+                row5Array,
+                row4Array,
+                row3Array,
+                row2Array,
+                row1Array
         };
         return board;
     }

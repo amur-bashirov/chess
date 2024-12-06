@@ -138,14 +138,9 @@ public class ChessClient {
                     ws = new WebSocketFacade(serverUrl, notificationHandler);
                     ChessMove move = new ChessMove(startPosition,endPosition,null);
                     ws.makeMove(authToken, boxedId,move);
-                    ListGamesRequest request2 = new ListGamesRequest(authToken);
-                    ListGamesResult result2 = server.listGames(request2, authToken);
-                    ChessGame game = result2.games().get(id).game();
-
-                    DrawChessBoard.draw(game,null,color);
                     String message = "\nYou made the move";
                     return message;
-                } throw new ResponseException(415, "Integers are out of range of chess board");
+                } throw new ResponseException(415, "Try again, numbers are not real");
             } throw new ResponseException(415,"All four must be integers");
         }throw new ResponseException(415,"There are no <ROW> <COLUMN> <ROW> <COLUMN>");
     }

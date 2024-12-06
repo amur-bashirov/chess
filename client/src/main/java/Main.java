@@ -12,8 +12,7 @@ public class Main {
         try {
             new Repl(serverUrl).run();
         } catch(ResponseException ex){
-            System.out.println(ex);
-            System.out.println("Problems with connection");
+            System.out.println(ex.getMessage());
         }
     }
 }

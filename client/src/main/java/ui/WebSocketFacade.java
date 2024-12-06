@@ -42,14 +42,14 @@ public class WebSocketFacade extends Endpoint{
                                break;
                            }
                            case NOTIFICATION:{
-                               ServerMessage.notificationMessage not =
-                                       new Gson().fromJson(message, ServerMessage.notificationMessage.class);
+                               ServerMessage.NotificationMessage not =
+                                       new Gson().fromJson(message, ServerMessage.NotificationMessage.class);
                                notificationHandler.notify(not);
                                break;
                            }
                        }
                     }catch(Exception ex){
-                        System.out.print("WebSocket threw exception");
+                        System.out.print(ex.getMessage());
                     }
                 }
             });

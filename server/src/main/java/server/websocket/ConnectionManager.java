@@ -35,6 +35,11 @@ public class ConnectionManager {
         if (!exists) {
             connectionsList.add(connection);
         }
+        if (connections.isEmpty()){
+            List<Connection> connectionList  = new ArrayList<>();
+            connectionList.add(connection);
+            connections.put(gameId,connectionList);
+        }
     }
 
 
