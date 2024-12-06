@@ -173,60 +173,17 @@ public class DrawChessBoard {
             }
             isDarkSquare = row % 2 == 0;
 
-            for (int col = 0; col < board[row].length; col++) {
-                if (moves != null){
-                    boolean possibleMove = false;
-                    for (ChessMove move : moves){
-                        ChessPosition startPosition = move.getStartPosition();
-                        int row3 = 0;
-                        if(color.equalsIgnoreCase("WHITE")) {
-                             row3 = 9 - startPosition.getRow() - 1;
-                        } else{
-                            row3 = startPosition.getRow() -1;
-                        }
-                        int col3 = startPosition.getColumn()-1;
 
-                        if (row == row3 && col == startPosition.getColumn()-1){
-                            out.print(SET_BG_COLOR_MAGENTA);
-                            possibleMove = true;
-                        }
-                        ChessPosition endPosition = move.getEndPosition();
-                        int row4 = 0;
-                        if(color.equalsIgnoreCase("WHITE")) {
-                             row4 = 9 - endPosition.getRow()-1;
-                        } else{
-                             row4 = endPosition.getRow()-1;
-                        }
-                        int col4 =  endPosition.getColumn()-1;
-                        if (row == row4 && col == col4){
-                            out.print(SET_BG_COLOR_MAGENTA);
-                            possibleMove = true;
-                        }
-                    } if(!possibleMove){
-                        if (isDarkSquare) {
-                            out.print(SET_BG_COLOR_LIGHT_GREY);
-                        } else {
-                            out.print(SET_BG_COLOR_DARK_GREY);
-                        }
-                    }
-                }else{
-                    if (isDarkSquare) {
-                        out.print(SET_BG_COLOR_LIGHT_GREY);
-                    } else {
-                        out.print(SET_BG_COLOR_DARK_GREY);
-                    }
-                }
 
                 out.print(SET_TEXT_COLOR_BLUE);
-                out.print(board[row][col]);
                 isDarkSquare = !isDarkSquare;
             }
             out.print(SET_BG_COLOR_DARK_GREEN);
             out.print(SET_TEXT_COLOR_RED);
             if (color.equalsIgnoreCase("BLACK")) {
-                out.print(1 + row + " " );
+                out.print(1  + " " );
             } else if(color.equalsIgnoreCase("WHITE")) {
-                out.print(8 - row + " " );
+                out.print(8  + " " );
             }
             out.print(SET_BG_COLOR_DARK_GREY);
             out.println();
