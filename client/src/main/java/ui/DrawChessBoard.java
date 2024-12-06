@@ -33,60 +33,6 @@ public class DrawChessBoard {
             for (int col = 0; col < squares[row].length; col++) {
                 ChessPiece piece = squares[row][col];
                 String piece2 = EMPTY;
-               // if (piece != null) {
-                    if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
-                        switch (piece.getPieceType()) {
-                            case BISHOP: {
-                                piece2 = WHITE_BISHOP;
-                                break;}
-                            case PAWN: {
-                                piece2 = WHITE_PAWN;
-                                break;}
-                            case KING: {
-                                piece2 = WHITE_KING;
-                                break;}
-                            case QUEEN: {
-                                piece2 = WHITE_QUEEN;
-                                break;}
-                            case ROOK: {
-                                piece2 = WHITE_ROOK;
-                                break;}
-                            case KNIGHT: {
-                                piece2 = WHITE_KNIGHT;
-                                break;}
-                        }
-                    }
-                    if (piece.getTeamColor() == ChessGame.TeamColor.BLACK) {
-                        switch (piece.getPieceType()) {
-                            case BISHOP: {
-                                piece2 = BLACK_BISHOP;
-                                break;
-                            }
-                            case PAWN: {
-                                piece2 = BLACK_PAWN;
-                                break;
-                            }
-                            case KING: {
-                                piece2 = BLACK_KING;
-                                break;
-                            }
-                            case QUEEN: {
-                                piece2 = BLACK_QUEEN;
-                                break;
-                            }
-                            case ROOK: {
-                                piece2 = BLACK_ROOK;
-                                break;
-                            }
-                            case KNIGHT: {
-                                piece2 = BLACK_KNIGHT;
-                                break;
-                            }
-                        }
-                   // }
-                }else{
-                    piece2 = EMPTY;
-                }
                     switch (row){
                         case 0:{
                             row1.add(piece2);
