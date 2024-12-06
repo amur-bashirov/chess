@@ -17,9 +17,11 @@ public class PostloginClient {
     private WebSocketFacade ws;
     private String color;
     private ChessGame game;
+    private int id;
 
 
-    public PostloginClient(String serverUrl, State state, String authToken) throws ResponseException {
+    public PostloginClient(String serverUrl, State state, String authToken, NotificationHandler notificationHandler ) throws ResponseException {
+        this.notificationHandler = notificationHandler;
         this.ws = new WebSocketFacade(serverUrl,notificationHandler);
         this.server = new ServerFacade(serverUrl);
         this.serverUrl = serverUrl;
@@ -94,6 +96,7 @@ public class PostloginClient {
                 state = state.INGAME;
                 ws = new WebSocketFacade(serverUrl, notificationHandler);
                 game = data.game();
+                this.id = id;
                 Integer boxedId = data.gameID();
                 ws.join(authToken,boxedId);
                 return String.format("\nYou are observing the game: %s.", data.gameName());
@@ -132,9 +135,9 @@ public class PostloginClient {
                 }
 
                 state = state.INGAME;
-                DrawChessBoard.draw(new ChessGame(),null,color);
                 ws = new WebSocketFacade(serverUrl, notificationHandler);
                 game = data.game();
+                this.id = id;
                 Integer boxedId = data.gameID();
                 ws.join(authToken,boxedId);
                 return String.format("\nYou joined game as %s.",color);
@@ -146,6 +149,10 @@ public class PostloginClient {
 
     public String getColor() {
         return color;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public ChessGame getGame() {

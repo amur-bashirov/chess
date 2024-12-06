@@ -1,4 +1,5 @@
 package ui;
+import chess.ChessMove;
 import com.google.gson.Gson;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
@@ -24,9 +25,32 @@ public class WebSocketFacade extends Endpoint{
             this.session.addMessageHandler(new MessageHandler.Whole<String>() {
                 @Override
                 public void onMessage(String message) {
-                    ServerMessage notification =
-                            new Gson().fromJson(message, ServerMessage.class);
-                    notificationHandler.notify(notification);
+                    try {
+                        ServerMessage notification =
+                                new Gson().fromJson(message, ServerMessage.class);
+                       switch( notification.getServerMessageType()){
+                           case LOAD_GAME: {
+                               ServerMessage.LoadGameMessage game =
+                                       new Gson().fromJson(message, ServerMessage.LoadGameMessage.class);
+                               notificationHandler.notify(game);
+                               break;
+                           }
+                           case ERROR: {
+                               ServerMessage.ErrorMessage error =
+                                       new Gson().fromJson(message, ServerMessage.ErrorMessage.class);
+                               notificationHandler.notify(error);
+                               break;
+                           }
+                           case NOTIFICATION:{
+                               ServerMessage.notificationMessage not =
+                                       new Gson().fromJson(message, ServerMessage.notificationMessage.class);
+                               notificationHandler.notify(not);
+                               break;
+                           }
+                       }
+                    }catch(Exception ex){
+                        System.out.print("WebSocket threw exception");
+                    }
                 }
             });
         } catch(DeploymentException | IOException | URISyntaxException ex){
@@ -42,6 +66,36 @@ public class WebSocketFacade extends Endpoint{
         } catch (IOException ex) {
             System.out.println("Problems with WebSocket");
         }
+    }
+
+    public void resign( String authToken, Integer gameID) throws ResponseException {
+        try {
+            var action = new UserGameCommand(UserGameCommand.CommandType.RESIGN, authToken, gameID);
+            this.session.getBasicRemote().sendText(new Gson().toJson(action));
+        } catch (IOException ex) {
+            System.out.println("Problems with WebSocket");
+        }
+    }
+
+    public void leave( String authToken, Integer gameID) throws ResponseException {
+        try {
+            var action = new UserGameCommand(UserGameCommand.CommandType.LEAVE, authToken, gameID);
+            this.session.getBasicRemote().sendText(new Gson().toJson(action));
+        } catch (IOException ex) {
+            System.out.println("Problems with WebSocket");
+        }
+    }
+
+    public void makeMove(String authToken, Integer gameID, ChessMove move) throws ResponseException{
+        try {
+            UserGameCommand command = new UserGameCommand.Move(UserGameCommand.CommandType.MAKE_MOVE,
+                    authToken, gameID, move);
+            var action = command;
+            this.session.getBasicRemote().sendText(new Gson().toJson(action));
+        } catch (IOException ex) {
+            System.out.println("Problems with WebSocket");
+        }
+
     }
     @Override
     public void onOpen(Session session, EndpointConfig endpointConfig){

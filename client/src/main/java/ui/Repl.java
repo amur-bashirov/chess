@@ -26,13 +26,14 @@ public class Repl  implements NotificationHandler{
     private final String serverUrl;
     private String color;
     private ChessGame game;
+    private int id = 0;
 
 
     public Repl(String serverUrl) throws ResponseException {
         this.serverUrl = serverUrl;
         preloginClient = new PreloginClient(serverUrl);
-        postloginClient = new PostloginClient(serverUrl,state,authToken);
-        chessClient = new ChessClient(serverUrl, state, authToken, ws, color, game);
+        postloginClient = new PostloginClient(serverUrl,state,authToken, this);
+        chessClient = new ChessClient(serverUrl, state, authToken, ws, color, game,id, this);
     }
 
     public State getState(){
@@ -62,13 +63,16 @@ public class Repl  implements NotificationHandler{
                         this.game = postloginClient.getGame();
                         this.ws = postloginClient.getWs();
                         this.color = postloginClient.getColor();
-                        this.chessClient = new ChessClient(serverUrl, state, authToken, ws,color, game);
+                        this.id = postloginClient.getId();
+                        this.chessClient = new ChessClient(serverUrl, state,
+                                authToken, ws,color, game, id, this);
                     }
                 }
                 else{
                     try {
                         result = chessClient.eval(line, state, authToken, color, game);
                         state = chessClient.getState();
+                        game = chessClient.getGame();
                         System.out.print(result);
                     } catch (ResponseException ex){
                         System.out.println(ex.getMessage());
@@ -87,8 +91,22 @@ public class Repl  implements NotificationHandler{
 
     public void notify(ServerMessage notification){
         //not sure what it is supposed to do
-        System.out.println(SET_TEXT_COLOR_RED + notification);
-        printPrompt();
+        String message = "";
+        if(notification.getServerMessageType() == ServerMessage.ServerMessageType.ERROR)
+        {
+            message = ((ServerMessage.ErrorMessage) notification).getErrorMessage();
+            System.out.println(SET_TEXT_COLOR_RED + message);
+            printPrompt();
+        } else if (notification.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME){
+            ChessGame game = ((ServerMessage.LoadGameMessage)notification).getGame();
+            DrawChessBoard.draw(game,null,color);
+            System.out.print("\n"  + ">>> " );
+
+        } else{
+            message = ((ServerMessage.notificationMessage) notification).getMessage();
+            System.out.println(SET_TEXT_COLOR_RED + message);
+            printPrompt();
+        }
     }
 
     private void printPrompt() {

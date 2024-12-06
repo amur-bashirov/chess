@@ -120,7 +120,7 @@ public class WebSocketHandler {
                GameData data = gameAccess.getGame2(gameId);
                if (data != null){
                    String message = "";
-                   if(data.whiteUsername().equals(username)){
+                   if(Objects.equals(data.whiteUsername(), username)){
                        message = String.format("%s is in the game as white player", username);
                    } else if(data.blackUsername().equals(username)){
                        message = String.format("%s is in the game as black player", username);
@@ -171,11 +171,11 @@ public class WebSocketHandler {
                 }
 
                 if (data != null) {
-                    if (data.whiteUsername().equals(username) || data.blackUsername().equals(username)) {
+                    if (Objects.equals(data.whiteUsername(), username) || Objects.equals(data.blackUsername(), username)) {
 
                         ChessGame game = data.game();
                         ChessGame.TeamColor color = game.getTeamTurn();
-                        if (data.blackUsername().equals(username) && !color.equals(ChessGame.TeamColor.BLACK)){
+                        if (Objects.equals(data.blackUsername(), username) && (!Objects.equals(color,ChessGame.TeamColor.BLACK))){
                             throw new DataAccessException("The chess piece belongs to white player");
                         }
                         if (data.whiteUsername().equals(username) && !color.equals(ChessGame.TeamColor.WHITE)){
