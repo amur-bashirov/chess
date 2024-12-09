@@ -28,8 +28,26 @@ public class WebSocketFacade extends Endpoint{
                     try {
                         ServerMessage notification =
                                 new Gson().fromJson(message, ServerMessage.class);
-                        notificationHandler.notify(notification);
-
+                       switch( notification.getServerMessageType()){
+                           case LOAD_GAME: {
+                               ServerMessage.LoadGameMessage game =
+                                       new Gson().fromJson(message, ServerMessage.LoadGameMessage.class);
+                               notificationHandler.notify(game);
+                               break;
+                           }
+                           case ERROR: {
+                               ServerMessage.ErrorMessage error =
+                                       new Gson().fromJson(message, ServerMessage.ErrorMessage.class);
+                               notificationHandler.notify(error);
+                               break;
+                           }
+                           case NOTIFICATION:{
+                               ServerMessage.NotificationMessage not =
+                                       new Gson().fromJson(message, ServerMessage.NotificationMessage.class);
+                               notificationHandler.notify(not);
+                               break;
+                           }
+                       }
                     }catch(Exception ex){
                         System.out.print(ex.getMessage());
                     }

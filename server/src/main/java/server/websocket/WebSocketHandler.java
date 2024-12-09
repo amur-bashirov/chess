@@ -172,10 +172,10 @@ public class WebSocketHandler {
                         ChessGame game = data.game();
                         ChessGame.TeamColor color = game.getTeamTurn();
                         if (Objects.equals(data.blackUsername(), username) && (!Objects.equals(color,ChessGame.TeamColor.BLACK))){
-                            throw new DataAccessException("The chess piece belongs to white player");
+                            throw new DataAccessException("It is not your turn");
                         }
                         if (data.whiteUsername().equals(username) && !color.equals(ChessGame.TeamColor.WHITE)){
-                            throw new DataAccessException("The chess piece belongs to black player");
+                            throw new DataAccessException("It is not your turn");
                         }
                         if (data.whiteUsername().equals(username)){
                             color = ChessGame.TeamColor.BLACK;
@@ -185,6 +185,7 @@ public class WebSocketHandler {
                         game.makeMove(move.getMove());
                         gameAccess.updateGame2(gameId,game);
                         String message2 = "";
+                        boolean condition = false;
                         if (game.isInCheckmate(ChessGame.TeamColor.WHITE) || game.isInCheckmate(ChessGame.TeamColor.BLACK)){
                             message2 = String.format("%s player is in the the checkmate, the game is stopped", color.toString());
                             stops.put(gameId,true);
@@ -193,13 +194,17 @@ public class WebSocketHandler {
                         } else if(game.isInStalemate(ChessGame.TeamColor.WHITE) || game.isInStalemate(ChessGame.TeamColor.BLACK)){
                             message2 = String.format("The game is in stalemate");
                             stops.put(gameId, true);
-                        } else{
-                            message2 = String.format("player moved piece at %s to %s",
-                                    move.getMove().getStartPosition().toString(),move.getMove().getEndPosition().toString());
                         }
-                        sendNotification(data,session,message2,username,connectionManager, gameId);
+                        String newMove = String.format("%s moved piece at %s to %s", username,
+                                move.getMove().getStartPosition().toString(),move.getMove().getEndPosition().toString());
+                        sendNotification(data,session,newMove,username,connectionManager, gameId);
+                        if(condition){
+                            var notification = new ServerMessage.NotificationMessage(message2);
+                            connectionManager.sendAll(notification, gameId);
+                        }
                         ServerMessage.LoadGameMessage game2 = new ServerMessage.LoadGameMessage(game);
                         connectionManager.sendAll(game2, gameId);
+
 
 
 
@@ -225,12 +230,10 @@ public class WebSocketHandler {
                var notification = new ServerMessage.NotificationMessage(message);
                connectionManager.broadcast(username, notification, gameId);
                GameData data = gameAccess.getGame2(gameId);
-               if (username.equals(data.blackUsername()) &&
-                       !data.game().getTeamTurn().equals(ChessGame.TeamColor.BLACK)){
+               if (username.equals(data.blackUsername())){
                    gameAccess.deletePlayer(data.game().getTeamTurn().toString(),gameId,username);
                }
-               if (username.equals(data.whiteUsername()) &&
-                       !!data.game().getTeamTurn().equals(ChessGame.TeamColor.WHITE)){
+               if (username.equals(data.whiteUsername())){
                    gameAccess.deletePlayer(data.game().getTeamTurn().toString(),gameId,username);
                }
            }else{
